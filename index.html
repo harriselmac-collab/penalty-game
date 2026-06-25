@@ -1,359 +1,223 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
 <title>ركلات الترجيح — ماجد للتوقعات</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-  :root{
-    --bg: var(--tg-theme-bg-color, #ffffff);
-    --text: var(--tg-theme-text-color, #1f2937);
-    --hint: var(--tg-theme-hint-color, #707579);
-    --card: var(--tg-theme-secondary-bg-color, #f3f4f6);
-    --btn: var(--tg-theme-button-color, #2e7dd6);
-    --btn-text: var(--tg-theme-button-text-color, #ffffff);
-  }
+  :root{--bg:#0b1424;--card:#13233f;--card2:#1b3257;--line:#2b62a8;--cyan:#37c6ff;--gold:#ffc23d;--text:#eaf2ff;--hint:#9fb6d6;--green:#3fe08a;--red:#ff6b6b}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif}
-  #app{max-width:480px;margin:0 auto;padding:16px}
-  h1{font-size:20px;font-weight:600;text-align:center;margin:6px 0 2px}
-  .sub{font-size:13px;color:var(--hint);text-align:center;margin:0 0 14px}
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-  .team{display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;border:none;background:var(--card);color:var(--text);cursor:pointer;font-size:15px;text-align:right;transition:transform 0.15s ease, filter 0.15s ease}
-  .team:active{transform:scale(0.96);filter:brightness(0.95)}
-  .team>*{pointer-events:none}
-  .flag{font-size:26px;line-height:1}
-  .tname{font-weight:600}
-  .tpow{font-size:12px;color:var(--hint)}
-  .hud{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px;font-size:14px;font-weight:600}
-  .msg{text-align:center;height:26px;font-size:18px;font-weight:600;margin:6px 0}
-  .aim{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;direction:ltr}
-  .aim button{padding:14px;border-radius:14px;border:none;background:var(--card);color:var(--text);font-size:16px;font-weight:600;cursor:pointer;transition:transform 0.15s ease, filter 0.15s ease}
-  .aim button:active{transform:scale(0.96);filter:brightness(0.95)}
-  .over{text-align:center;padding:18px 8px}
-  .over .big{font-size:46px;font-weight:700;margin:4px 0}
-  .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
-  .row button{padding:12px 16px;border-radius:14px;border:none;background:var(--card);color:var(--text);font-size:15px;font-weight:600;cursor:pointer;transition:transform 0.15s ease, filter 0.15s ease}
-  .row button:active{transform:scale(0.96);filter:brightness(0.95)}
-  @keyframes pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.18)}100%{transform:scale(1);opacity:1}}
-  .pop{display:inline-block;animation:pop .35s ease-out}
-  .confetti {
-    position: absolute;
-    width: 10px;
-    height: 20px;
-    pointer-events: none;
-    will-change: transform;
-  }
+  html,body{margin:0;padding:0;background:radial-gradient(120% 90% at 50% 0%,#16294a 0%,#0b1424 70%);color:var(--text);font-family:-apple-system,'Segoe UI',Tahoma,Arial,sans-serif;overflow-x:hidden}
+  #app{max-width:480px;margin:0 auto;padding:10px 12px 18px;min-height:100vh}
+  .title{text-align:center;font-size:18px;font-weight:700;letter-spacing:.3px;margin:6px 0 10px;color:var(--text)}
+  .title b{color:var(--gold)}
+  /* HUD */
+  .hud{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+  .pill{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:14px;padding:7px 12px;display:flex;align-items:center;gap:7px;font-size:14px;font-weight:600;box-shadow:0 2px 0 rgba(0,0,0,.25)}
+  .pill .lab{color:var(--hint);font-size:11px;font-weight:600}
+  .score-pill{font-size:22px;color:var(--cyan);min-width:54px;justify-content:center}
+  .mute{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  /* Scene */
+  .scene{position:relative;width:100%;aspect-ratio:3/2;border-radius:18px;overflow:hidden;background:#0a1a30 center/cover no-repeat;border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+  .scene.shake{animation:shake .4s}
+  @keyframes shake{0%,100%{transform:translate(0,0)}20%{transform:translate(-5px,3px)}40%{transform:translate(5px,-3px)}60%{transform:translate(-4px,-2px)}80%{transform:translate(4px,2px)}}
+  #kp{position:absolute;left:50%;top:41%;width:30%;transform:translate(-50%,-50%);transition:transform .42s cubic-bezier(.3,.8,.3,1);filter:drop-shadow(0 6px 6px rgba(0,0,0,.45));z-index:3}
+  #bl{position:absolute;left:50%;top:70%;width:13%;transform:translate(-50%,-50%);transition:transform .55s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 5px 5px rgba(0,0,0,.5));z-index:4}
+  #kicker{position:absolute;left:30%;top:84%;width:26%;transform:translate(-50%,-50%) rotate(0deg);transform-origin:bottom center;transition:transform .25s ease;filter:drop-shadow(0 8px 8px rgba(0,0,0,.5));z-index:5}
+  #kicker.kick{transform:translate(-50%,-50%) rotate(-12deg)}
+  .msg{position:absolute;top:8%;left:50%;transform:translate(-50%,0);font-size:26px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.6);z-index:8;pointer-events:none;opacity:0}
+  .msg.show{animation:pop .9s ease}
+  @keyframes pop{0%{opacity:0;transform:translate(-50%,10px) scale(.7)}25%{opacity:1;transform:translate(-50%,0) scale(1.1)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-12px) scale(1)}}
+  /* Controls */
+  .aim{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;direction:ltr}
+  .aim button{appearance:none;border:none;cursor:pointer;border-radius:16px;padding:14px 6px 11px;font-size:14px;font-weight:700;color:#06203a;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:0 4px 0 rgba(0,0,0,.35);transition:transform .08s}
+  .aim button:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
+  .aim button .ar{font-size:22px;line-height:1}
+  .aim .b-side{background:linear-gradient(180deg,#67d3ff,#1aa3e8)}
+  .aim .b-mid{background:linear-gradient(180deg,#ffd96b,#f3a91c)}
+  .aim button .lbl{font-family:inherit}
+  /* Buttons / screens */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;border-radius:14px;padding:13px 18px;font-size:15px;font-weight:700;color:#06203a;background:linear-gradient(180deg,#67d3ff,#1aa3e8);box-shadow:0 4px 0 rgba(0,0,0,.3);transition:transform .08s}
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.3)}
+  .btn.ghost{background:var(--card2);color:var(--text);border:1px solid var(--line)}
+  .btn.gold{background:linear-gradient(180deg,#ffd96b,#f3a91c)}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:8px}
+  .team{display:flex;align-items:center;gap:10px;padding:13px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,var(--card2),var(--card));color:var(--text);cursor:pointer;font-size:15px;font-weight:600;text-align:right;transition:transform .12s,filter .12s}
+  .team:active{transform:scale(.97)}
+  .team .flag{font-size:24px}
+  .team .stars{margin-inline-start:auto;color:var(--gold);font-size:12px;letter-spacing:1px}
+  .over{position:absolute;inset:0;background:rgba(6,14,28,.82);backdrop-filter:blur(2px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;z-index:20;border-radius:18px;padding:18px}
+  .over .big{font-size:46px;font-weight:800;color:var(--gold);line-height:1}
+  .over .sub{color:var(--hint);font-size:14px}
+  .over .reward{font-size:16px;font-weight:700}
+  .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  .hint{text-align:center;color:var(--hint);font-size:12px;margin-top:10px}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <script>
 (function(){
-  var tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+  var tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
   if(tg){ try{ tg.ready(); tg.expand(); }catch(e){} }
-  var app = document.getElementById('app');
+  var ASSETS='assets/';
   var teams = [
     {f:'🇸🇦',n:'السعودية',s:2},{f:'🇪🇬',n:'مصر',s:2},{f:'🇶🇦',n:'قطر',s:2},
     {f:'🇲🇦',n:'المغرب',s:3},{f:'🇸🇳',n:'السنغال',s:3},{f:'🇳🇱',n:'هولندا',s:4},
     {f:'🇵🇹',n:'البرتغال',s:4},{f:'🇪🇸',n:'إسبانيا',s:4},{f:'🇩🇪',n:'ألمانيا',s:4},
     {f:'🇦🇷',n:'الأرجنتين',s:5},{f:'🇧🇷',n:'البرازيل',s:5},{f:'🇫🇷',n:'فرنسا',s:5}
   ];
-  var team=null, score=0, best=0, busy=false;
-  var audioCtx = null, musicTimer = null, muted = false, musicStep = 0;
-  var melody = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63, 349.23, 440.00, 523.25, 587.33, 523.25, 392.00];
-  function initAudio(){
-    if(!audioCtx){
-      var AC = window.AudioContext || window.webkitAudioContext;
-      if(AC){
-        try{
-          audioCtx = new AC();
-          musicTimer = setInterval(playMusicNote, 220);
-        }catch(e){}
-      }
-    }
-    if(audioCtx && audioCtx.state === 'suspended'){ try{ audioCtx.resume(); }catch(e){} }
-  }
-  window.toggleMute = function(e){
-    if(e) e.stopPropagation();
-    muted = !muted;
-    var mbs = document.querySelectorAll('.mute-btn');
-    Array.prototype.forEach.call(mbs, function(mb){ mb.textContent = muted ? '🔇' : '🔊'; });
-    if(!muted) initAudio();
-  };
-  function playMusicNote(){
-    if(muted || !audioCtx || audioCtx.state !== 'running') return;
-    try{
-      var freq = melody[musicStep % melody.length];
-      musicStep++;
-      var osc = audioCtx.createOscillator();
-      var gain = audioCtx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.2);
+  var team=null, score=0, best=0, busy=false, muted=false, audioCtx=null;
+  var app=document.getElementById('app');
+
+  /* ---------- audio ---------- */
+  function tone(freq,dur,type,vol){ if(muted) return;
+    try{ audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+      var o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.type=type||'square'; o.frequency.value=freq; o.connect(g); g.connect(audioCtx.destination);
+      g.gain.setValueAtTime(vol||0.07,audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+dur);
+      o.start(); o.stop(audioCtx.currentTime+dur);
     }catch(e){}
   }
-  function playSound(type){
-    initAudio();
-    if(muted || !audioCtx || audioCtx.state !== 'running') return;
-    try{
-      var t = audioCtx.currentTime;
-      var osc = audioCtx.createOscillator();
-      var gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      if(type === 'click'){
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(400, t);
-        osc.frequency.exponentialRampToValueAtTime(800, t + 0.05);
-        gain.gain.setValueAtTime(0.2, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
-        osc.start(t); osc.stop(t + 0.05);
-      } else if(type === 'shoot'){
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(300, t);
-        osc.frequency.exponentialRampToValueAtTime(40, t + 0.15);
-        gain.gain.setValueAtTime(0.4, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.15);
-        osc.start(t); osc.stop(t + 0.15);
-      } else if(type === 'goal'){
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(1046.50, t);
-        osc.frequency.setValueAtTime(1318.51, t + 0.1);
-        osc.frequency.setValueAtTime(1567.98, t + 0.2);
-        gain.gain.setValueAtTime(0.15, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.35);
-        osc.start(t); osc.stop(t + 0.35);
-      } else if(type === 'save'){
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(180, t);
-        osc.frequency.linearRampToValueAtTime(90, t + 0.25);
-        gain.gain.setValueAtTime(0.2, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.25);
-        osc.start(t); osc.stop(t + 0.25);
-      } else if(type === 'hooray'){
-        var notes = [523.25, 659.25, 783.99, 1046.50];
-        notes.forEach(function(freq, idx){
-          var o = audioCtx.createOscillator();
-          var g = audioCtx.createGain();
-          o.type = 'triangle';
-          o.frequency.setValueAtTime(freq, t + idx * 0.12);
-          g.gain.setValueAtTime(0, t);
-          g.gain.setValueAtTime(0.15, t + idx * 0.12);
-          g.gain.exponentialRampToValueAtTime(0.001, t + 1.8 + idx * 0.2);
-          o.connect(g); g.connect(audioCtx.destination);
-          o.start(t + idx * 0.12); o.stop(t + 1.8 + idx * 0.2);
-        });
-        var cheer = audioCtx.createOscillator();
-        var cheerGain = audioCtx.createGain();
-        cheer.type = 'sawtooth';
-        cheer.frequency.setValueAtTime(150, t);
-        cheer.frequency.linearRampToValueAtTime(400, t + 0.5);
-        cheer.frequency.linearRampToValueAtTime(200, t + 2.0);
-        cheerGain.gain.setValueAtTime(0.1, t);
-        cheerGain.gain.linearRampToValueAtTime(0.25, t + 0.5);
-        cheerGain.gain.exponentialRampToValueAtTime(0.01, t + 2.0);
-        cheer.connect(cheerGain); cheerGain.connect(audioCtx.destination);
-        cheer.start(t); cheer.stop(t + 2.0);
-      }
-    }catch(e){}
+  function sfx(k){ if(k==='shoot'){tone(280,0.12,'square')} else if(k==='click'){tone(520,0.05,'square',0.05)}
+    else if(k==='save'){tone(150,0.28,'sawtooth',0.09)} else if(k==='goal'){tone(523,0.12);setTimeout(function(){tone(659,0.12)},90);setTimeout(function(){tone(784,0.18)},190)} }
+  function buzz(t){ if(tg&&tg.HapticFeedback){ try{ tg.HapticFeedback.impactOccurred(t||'medium'); }catch(e){} } }
+  window.toggleMute=function(e){ if(e){e.stopPropagation();} muted=!muted; var m=document.getElementById('mute'); if(m) m.textContent=muted?'🔇':'🔊'; };
+
+  /* ---------- confetti ---------- */
+  function confetti(){ var c=document.createElement('div'); c.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden';
+    document.body.appendChild(c); var cols=['#ffc23d','#37c6ff','#3fe08a','#ff6b6b','#b18bff'];
+    for(var i=0;i<70;i++){ var p=document.createElement('div'); var sz=6+Math.random()*8;
+      p.style.cssText='position:absolute;top:-20px;left:'+(Math.random()*100)+'%;width:'+sz+'px;height:'+(sz*0.6)+'px;background:'+cols[i%cols.length]+';opacity:.95;border-radius:2px;transform:rotate('+(Math.random()*360)+'deg)';
+      c.appendChild(p); animateP(p); }
+    setTimeout(function(){c.remove();},2600);
+  }
+  function animateP(p){ var top=-20,vy=2+Math.random()*3,vx=(Math.random()-0.5)*3,rot=Math.random()*12;
+    var r=0; (function step(){ top+=vy; r+=rot; var l=parseFloat(p.style.left); p.style.top=top+'px'; p.style.left=(l+vx*0.06)+'%'; p.style.transform='rotate('+r+'deg)';
+      if(top<window.innerHeight+30){ requestAnimationFrame(step); } })();
   }
 
-  function hideMain(){ if(tg&&tg.MainButton){ tg.MainButton.hide(); tg.MainButton.offClick(submit); } }
-  function showMain(){ if(tg&&tg.MainButton){ tg.MainButton.setText('استلم رصيدك 🎁'); tg.MainButton.onClick(submit); tg.MainButton.show(); } }
-  function submit(){ if(tg){ try{ tg.sendData(JSON.stringify({score:best,team:team?team.n:''})); tg.close(); }catch(e){} } }
-  function buzz(t){ if(tg&&tg.HapticFeedback){ try{ tg.HapticFeedback.impactOccurred(t||'medium'); }catch(e){} } }
-  function setMsg(t,c){ var m=document.getElementById('msg'); if(m){ m.innerHTML=t?'<span class="pop">'+t+'</span>':''; m.style.color=c||'var(--text)'; } }
+  /* ---------- screens ---------- */
+  function stars(n){ return '★'.repeat(n)+'☆'.repeat(5-n); }
 
   function selectScreen(){
-    hideMain(); busy=false;
-    var h='<div style="display:flex;justify-content:space-between;align-items:center"><h1>ركلات الترجيح</h1><button class="mute-btn" style="background:var(--card);border:none;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center" onclick="toggleMute(event)">'+(muted?'🔇':'🔊')+'</button></div><div class="sub">اختر منتخبك — كلما كان أقوى كان التسجيل أسهل</div><div class="grid">';
+    hideMain(); team=null; score=0;
+    var html='<div class="title">🐱 <b>ركلات الترجيح</b></div>'
+      +'<div class="hint">اختر منتخبك — كلما كان أقوى، صار التسجيل أسهل ضد حارس الخصم 🧤</div><div class="grid">';
     teams.forEach(function(t,i){
-      h+='<button class="team" data-i="'+i+'"><span class="flag">'+t.f+'</span><span><span class="tname">'+t.n+'</span><br><span class="tpow">القوة '+t.s+'/5</span></span></button>';
+      html+='<button class="team" data-i="'+i+'"><span class="flag">'+t.f+'</span><span>'+t.n+'</span><span class="stars">'+stars(t.s)+'</span></button>';
     });
-    h+='</div>';
-    app.innerHTML=h;
+    html+='</div>';
+    app.innerHTML=html;
     Array.prototype.forEach.call(app.querySelectorAll('.team'),function(b){
-      b.onclick=function(){ playSound('click'); team=teams[+b.getAttribute('data-i')]; score=0; gameScreen(); };
+      b.onclick=function(){ sfx('click'); team=teams[+b.getAttribute('data-i')]; score=0; gameScreen(); };
     });
   }
-  function crowd(){
-    var s='', x, y, c=['#ff4757','#2ed573','#1e90ff','#ffa502','#9b59b6','#ffffff','#eccc68','#ff6b81','#7bed9f','#70a1ff'];
-    for(y=20; y<=140; y+=12){
-      for(x=28; x<=292; x+=11){
-        var col = c[(x+y*3)%c.length];
-        var headCol = ['#f1c29b','#e0ac82','#5c3a21','#ffdbb5','#d99b66'][(x*2+y)%5];
-        s+='<rect x="'+(x-3.5)+'" y="'+(y+1)+'" width="7" height="4" rx="2" fill="'+col+'"/>';
-        s+='<circle cx="'+x+'" cy="'+(y-1)+'" r="2.5" fill="'+headCol+'"/>';
-        if((x+y)%27===0){
-          s+='<line x1="'+x+'" y1="'+y+'" x2="'+(x+4)+'" y2="'+(y-6)+'" stroke="#fff" stroke-width="1"/><polygon points="'+(x+4)+','+(y-6)+' '+(x+11)+','+(y-4)+' '+(x+4)+','+(y-2)+'" fill="'+col+'"/>';
-        }
-      }
-    }
-    return s;
+
+  function hudHTML(){
+    return '<div class="hud">'
+      +'<div class="pill"><span>'+team.f+'</span><span>'+team.n+'</span></div>'
+      +'<div class="pill score-pill" id="sc">'+score+'</div>'
+      +'<div class="pill"><span class="lab">الأفضل</span><span id="bs">'+best+'</span></div>'
+      +'<button class="mute" id="mute" onclick="toggleMute(event)">'+(muted?'🔇':'🔊')+'</button>'
+      +'</div>';
   }
-  function netG(){
-    var s='', i, j;
-    s+='<line x1="40" y1="36" x2="52" y2="46" stroke="#cbd5e1" stroke-width="2"/><line x1="280" y1="36" x2="268" y2="46" stroke="#cbd5e1" stroke-width="2"/>'
-      +'<line x1="52" y1="46" x2="52" y2="156" stroke="#94a3b8" stroke-width="2"/><line x1="268" y1="46" x2="268" y2="156" stroke="#94a3b8" stroke-width="2"/>'
-      +'<line x1="52" y1="46" x2="268" y2="46" stroke="#94a3b8" stroke-width="1.5"/>';
-    for(i=40; i<=280; i+=12){
-      var bx = 52 + ((i - 40) / 240) * 216;
-      s+='<line x1="'+i+'" y1="36" x2="'+bx+'" y2="46" stroke="#ffffff" stroke-width="0.8" opacity="0.7"/>';
-      s+='<line x1="'+bx+'" y1="46" x2="'+bx+'" y2="156" stroke="#ffffff" stroke-width="0.8" opacity="0.7"/>';
-    }
-    for(j=54; j<=150; j+=12){
-      s+='<line x1="40" y1="'+j+'" x2="280" y2="'+j+'" stroke="#ffffff" stroke-width="0.8" opacity="0.7"/>';
-    }
-    return s;
+  function sceneHTML(){
+    return '<div class="scene" id="scene" style="background-image:url('+ASSETS+'stadium.jpg)">'
+      +'<div class="msg" id="msg"></div>'
+      +'<img id="kp" src="'+ASSETS+'keeper.png" alt="">'
+      +'<img id="kicker" src="'+ASSETS+'kicker.png" alt="">'
+      +'<img id="bl" src="'+ASSETS+'ball.png" alt="">'
+      +'</div>';
   }
-  function keeperSVG(){return '<g id="kp" style="transition:transform .45s ease-out;transform-box:fill-box;transform-origin:center;">'
-    +'<ellipse cx="160" cy="151" rx="26" ry="6" fill="rgba(0,0,0,0.25)"/>'
-    +'<rect x="148" y="142" width="10" height="7" rx="3" fill="#e1ff00" stroke="#1f2937" stroke-width="1.5"/><rect x="162" y="142" width="10" height="7" rx="3" fill="#e1ff00" stroke="#1f2937" stroke-width="1.5"/>'
-    +'<rect x="150" y="132" width="7" height="12" fill="#f0c9a3" stroke="#1f2937" stroke-width="1.5"/><rect x="163" y="132" width="7" height="12" fill="#f0c9a3" stroke="#1f2937" stroke-width="1.5"/>'
-    +'<rect x="147" y="122" width="12" height="13" rx="2" fill="#1a2536" stroke="#1f2937" stroke-width="1.5"/><rect x="161" y="122" width="12" height="13" rx="2" fill="#1a2536" stroke="#1f2937" stroke-width="1.5"/>'
-    +'<rect x="147" y="120" width="26" height="6" fill="#1a2536" stroke="#1f2937" stroke-width="1.5"/>'
-    +'<rect x="144" y="96" width="32" height="28" rx="8" fill="url(#jersey)" stroke="#1f2937" stroke-width="2.5"/>'
-    +'<path d="M 154 96 Q 160 102 166 96" fill="#1a2536" stroke="#1f2937" stroke-width="1.5"/>'
-    +'<polygon points="150,104 170,104 160,116" fill="#ffcf00" opacity="0.9"/><polygon points="153,106 167,106 160,114" fill="#1a2536"/>'
-    +'<line x1="146" y1="102" x2="134" y2="92" stroke="#1f2937" stroke-width="13" stroke-linecap="round"/><line x1="146" y1="102" x2="134" y2="92" stroke="url(#jersey)" stroke-width="9" stroke-linecap="round"/>'
-    +'<line x1="174" y1="102" x2="186" y2="92" stroke="#1f2937" stroke-width="13" stroke-linecap="round"/><line x1="174" y1="102" x2="186" y2="92" stroke="url(#jersey)" stroke-width="9" stroke-linecap="round"/>'
-    +'<line x1="134" y1="92" x2="128" y2="86" stroke="#1f2937" stroke-width="9" stroke-linecap="round"/><line x1="134" y1="92" x2="128" y2="86" stroke="#f0c9a3" stroke-width="6" stroke-linecap="round"/>'
-    +'<line x1="186" y1="92" x2="192" y2="86" stroke="#1f2937" stroke-width="9" stroke-linecap="round"/><line x1="186" y1="92" x2="192" y2="86" stroke="#f0c9a3" stroke-width="6" stroke-linecap="round"/>'
-    +'<rect x="119" y="78" width="14" height="16" rx="5" fill="url(#glove)" stroke="#1f2937" stroke-width="2.5"/><rect x="131" y="82" width="5" height="8" rx="2.5" fill="#ffffff" stroke="#1f2937" stroke-width="2"/><rect x="121" y="80" width="8" height="12" rx="3" fill="#ffffff"/><rect x="122" y="91" width="10" height="5" rx="2" fill="#1a2536" stroke="#1f2937" stroke-width="1.5"/>'
-    +'<rect x="187" y="78" width="14" height="16" rx="5" fill="url(#glove)" stroke="#1f2937" stroke-width="2.5"/><rect x="184" y="82" width="5" height="8" rx="2.5" fill="#ffffff" stroke="#1f2937" stroke-width="2"/><rect x="191" y="80" width="8" height="12" rx="3" fill="#ffffff"/><rect x="188" y="91" width="10" height="5" rx="2" fill="#1a2536" stroke="#1f2937" stroke-width="1.5"/>'
-    +'<rect x="155" y="90" width="10" height="8" fill="#e0ac82" stroke="#1f2937" stroke-width="2"/>'
-    +'<circle cx="160" cy="84" r="12.5" fill="#f0c9a3" stroke="#1f2937" stroke-width="2.5"/>'
-    +'<circle cx="148" cy="85" r="3" fill="#f0c9a3" stroke="#1f2937" stroke-width="1.5"/><circle cx="172" cy="85" r="3" fill="#f0c9a3" stroke="#1f2937" stroke-width="1.5"/>'
-    +'<path d="M 148 83 C 148 72 152 70 160 70 C 168 70 172 72 172 83 C 168 76 152 76 148 83 Z" fill="#3d2616" stroke="#1f2937" stroke-width="2"/>'
-    +'<line x1="152" y1="81" x2="157" y2="83" stroke="#2d1e12" stroke-width="2" stroke-linecap="round"/><line x1="168" y1="81" x2="163" y2="83" stroke="#2d1e12" stroke-width="2" stroke-linecap="round"/>'
-    +'<circle cx="155" cy="85" r="2.5" fill="#ffffff"/><circle cx="165" cy="85" r="2.5" fill="#ffffff"/><circle cx="155.5" cy="85" r="1.2" fill="#1f2937"/><circle cx="165.5" cy="85" r="1.2" fill="#1f2937"/><circle cx="156" cy="84.5" r="0.5" fill="#ffffff"/><circle cx="166" cy="84.5" r="0.5" fill="#ffffff"/>'
-    +'<path d="M 156 90 Q 160 93 164 89" fill="none" stroke="#1f2937" stroke-width="1.8" stroke-linecap="round"/>'
-    +'<path d="M 160 86 L 160 88" stroke="#d99b66" stroke-width="1.8" stroke-linecap="round"/>'
-    +'</g>';}
-  function ballSVG(){return '<g id="bl" style="transition:transform .55s cubic-bezier(.45,0,.2,1);transform-box:fill-box;transform-origin:center;">'
-    +'<ellipse cx="160" cy="236" rx="13" ry="4.5" fill="rgba(0,0,0,0.28)"/>'
-    +'<circle cx="160" cy="225" r="12" fill="url(#ball)" stroke="#1f2937" stroke-width="2.2"/>'
-    +'<polygon points="160,218.5 166,222.5 164,229.5 156,229.5 154,222.5" fill="#111827" stroke="#374151" stroke-width="1" stroke-linejoin="round"/>'
-    +'<polygon points="160,213 156,214 164,214" fill="#111827"/><polygon points="169,219 171,223 172,219" fill="#111827"/><polygon points="151,219 149,223 148,219" fill="#111827"/><polygon points="168,231 165,235 170,234" fill="#111827"/><polygon points="152,231 155,235 150,234" fill="#111827"/>'
-    +'<line x1="160" y1="218.5" x2="160" y2="213" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/><line x1="166" y1="222.5" x2="170" y2="221" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/><line x1="164" y1="229.5" x2="166.5" y2="233" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/><line x1="156" y1="229.5" x2="153.5" y2="233" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/><line x1="154" y1="222.5" x2="150" y2="221" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/>'
-    +'<path d="M 151 217 C 155 214 165 214 169 217 C 165 216 155 216 151 217 Z" fill="#ffffff" opacity="0.6"/>'
-    +'</g>';}
-  function scene(){return '<svg viewBox="0 0 320 250" width="100%" style="display:block;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,0.15)">'
-    +'<defs>'
-    +'<linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#1e90ff"/><stop offset="100%" stop-color="#80d0ff"/></linearGradient>'
-    +'<radialGradient id="sun" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#fffb00"/><stop offset="40%" stop-color="#ffdf00"/><stop offset="100%" stop-color="#ffb900"/></radialGradient>'
-    +'<linearGradient id="pitch" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#2b8a3e"/><stop offset="100%" stop-color="#37b24d"/></linearGradient>'
-    +'<linearGradient id="stripe" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#339f46"/><stop offset="100%" stop-color="#40c057"/></linearGradient>'
-    +'<linearGradient id="post" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#e2e8f0"/><stop offset="30%" stop-color="#ffffff"/><stop offset="80%" stop-color="#e2e8f0"/><stop offset="100%" stop-color="#cbd5e1"/></linearGradient>'
-    +'<linearGradient id="cbar" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#e2e8f0"/><stop offset="30%" stop-color="#ffffff"/><stop offset="80%" stop-color="#e2e8f0"/><stop offset="100%" stop-color="#cbd5e1"/></linearGradient>'
-    +'<linearGradient id="jersey" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ff5e00"/><stop offset="100%" stop-color="#d93800"/></linearGradient>'
-    +'<linearGradient id="glove" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#00d2ff"/><stop offset="100%" stop-color="#0088cc"/></linearGradient>'
-    +'<radialGradient id="ball" cx="40%" cy="35%" r="70%"><stop offset="0%" stop-color="#ffffff"/><stop offset="70%" stop-color="#e2e8f0"/><stop offset="100%" stop-color="#94a3b8"/></radialGradient>'
-    +'</defs>'
-    +'<rect x="0" y="0" width="320" height="160" fill="url(#sky)"/>'
-    +'<circle cx="55" cy="40" r="28" fill="#ffd54a" opacity="0.3"/><circle cx="55" cy="40" r="21" fill="#ffd54a" opacity="0.6"/><circle cx="55" cy="40" r="16" fill="url(#sun)"/>'
-    +'<path d="M 220 45 C 210 35 190 35 180 45 C 170 45 160 55 165 65 C 165 70 170 75 180 75 L 240 75 C 255 75 260 60 250 52 C 245 42 230 40 220 45 Z" fill="#ffffff" opacity="0.85"/>'
-    +'<path d="M 100 30 C 90 20 70 20 60 30 C 50 30 42 40 48 50 C 48 55 52 60 62 60 L 118 60 C 130 60 135 45 125 38 C 120 28 110 28 100 30 Z" fill="#ffffff" opacity="0.75"/>'
-    +'<path d="M 290 25 C 280 15 260 15 250 25 C 240 25 235 35 240 42 C 240 46 245 50 255 50 L 305 50 C 315 50 320 38 310 30 C 305 22 298 22 290 25 Z" fill="#ffffff" opacity="0.8"/>'
-    +'<rect x="15" y="12" width="290" height="144" fill="#2d3748" rx="8"/><rect x="20" y="16" width="280" height="140" fill="#1a202c"/>'
-    + crowd()
-    +'<rect x="15" y="144" width="290" height="12" fill="#dc2626"/><text x="160" y="153" fill="#ffffff" font-size="9" font-weight="bold" font-family="sans-serif" text-anchor="middle" letter-spacing="2">🏆 CHAMPIONSHIP 🏆</text>'
-    +'<rect x="0" y="156" width="320" height="94" fill="url(#pitch)"/>'
-    +'<polygon points="0,156 40,156 -66.4,250 -141.9,250" fill="url(#stripe)"/><polygon points="80,156 120,156 84.5,250 9.1,250" fill="url(#stripe)"/><polygon points="160,156 200,156 235.5,250 160,250" fill="url(#stripe)"/><polygon points="240,156 280,156 386.4,250 310.9,250" fill="url(#stripe)"/><polygon points="320,156 360,156 537.4,250 461.9,250" fill="url(#stripe)"/>'
-    +'<line x1="20" y1="156" x2="300" y2="156" stroke="#ffffff" stroke-width="2" opacity="0.85"/><line x1="-6" y1="210" x2="326" y2="210" stroke="#ffffff" stroke-width="2.5" opacity="0.85"/><line x1="50" y1="156" x2="-6" y2="210" stroke="#ffffff" stroke-width="2.5" opacity="0.85"/><line x1="270" y1="156" x2="326" y2="210" stroke="#ffffff" stroke-width="2.5" opacity="0.85"/>'
-    +'<path d="M 100 156 L 89.2 175 L 230.8 175 L 220 156" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.85"/>'
-    +'<rect x="46" y="44" width="228" height="112" fill="#164e1a" opacity="0.35"/>'+netG()
-    +'<rect x="40" y="38" width="9" height="118" rx="4" fill="url(#post)" stroke="#1f2937" stroke-width="0.8"/><rect x="271" y="38" width="9" height="118" rx="4" fill="url(#post)" stroke="#1f2937" stroke-width="0.8"/><rect x="40" y="36" width="240" height="9" rx="4" fill="url(#cbar)" stroke="#1f2937" stroke-width="0.8"/>'
-    +keeperSVG()+'<ellipse cx="160" cy="232" rx="4" ry="2" fill="#ffffff" opacity="0.9"/>'+ballSVG()+'</svg>';}
   function gameScreen(){
     hideMain(); busy=false;
-    app.innerHTML='<div class="hud"><span>'+team.f+' '+team.n+'</span><span>الأهداف: <b id="sc">'+score+'</b></span><span style="color:var(--hint)">الأفضل: '+best+'</span><button class="mute-btn" style="background:var(--card);border:none;border-radius:50%;width:32px;height:32px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center" onclick="toggleMute(event)">'+(muted?'🔇':'🔊')+'</button></div>'
-      +scene()+'<div class="msg" id="msg"></div>'
-      +'<div class="aim"><button data-d="L">◄ يسار</button><button data-d="C">▲ وسط</button><button data-d="R">يمين ►</button></div>';
-    Array.prototype.forEach.call(app.querySelectorAll('.aim button'),function(b){ b.onclick=function(){ shoot(b.getAttribute('d')||b.getAttribute('data-d')); }; });
+    app.innerHTML=hudHTML()+sceneHTML()
+      +'<div class="aim">'
+      +'<button class="b-side" data-d="L"><span class="ar">◄</span><span class="lbl">يسار</span></button>'
+      +'<button class="b-mid" data-d="C"><span class="ar">▲</span><span class="lbl">وسط</span></button>'
+      +'<button class="b-side" data-d="R"><span class="ar">►</span><span class="lbl">يمين</span></button>'
+      +'</div>';
+    Array.prototype.forEach.call(app.querySelectorAll('.aim button'),function(b){
+      b.onclick=function(){ shoot(b.getAttribute('data-d')); };
+    });
   }
+
+  function setMsg(t,c){ var m=document.getElementById('msg'); if(!m) return; m.textContent=t; m.style.color=c||'#fff'; m.classList.remove('show'); void m.offsetWidth; m.classList.add('show'); }
+
   function shoot(dir){
-    if(busy||!team) return; busy=true; setMsg(''); buzz('light'); playSound('shoot');
-    var tx=dir==='L'?85:dir==='R'?235:160;
-    document.getElementById('bl').style.transform='translate('+(tx-160)+'px,'+(95-225)+'px)';
+    if(busy||!team) return; busy=true; sfx('shoot'); buzz('light');
+    var scene=document.getElementById('scene'), kp=document.getElementById('kp'), bl=document.getElementById('bl'), kicker=document.getElementById('kicker');
+    var W=scene.clientWidth, H=scene.clientHeight;
+    if(kicker){ kicker.classList.add('kick'); setTimeout(function(){kicker.classList.remove('kick');},260); }
+    // ball targets (fraction of scene)
+    var T={L:{x:0.30,y:0.34},C:{x:0.50,y:0.30},R:{x:0.70,y:0.34}}, base={x:0.50,y:0.70};
+    var t=T[dir];
+    setTimeout(function(){
+      bl.style.transform='translate(calc(-50% + '+((t.x-base.x)*W)+'px), calc(-50% + '+((t.y-base.y)*H)+'px)) scale(0.42)';
+    },120);
+    // keeper reads with a probability that drops for stronger teams
     var readProb=0.15+(5-team.s)*0.06, kd;
     if(Math.random()<readProb){ kd=dir; } else { var o=['L','C','R'].filter(function(d){return d!==dir;}); kd=o[Math.floor(Math.random()*o.length)]; }
-    var k=document.getElementById('kp');
-    if(kd==='L') k.style.transform='translate(-55px,-6px) rotate(-16deg)';
-    else if(kd==='R') k.style.transform='translate(55px,-6px) rotate(16deg)';
-    else k.style.transform='translate(0,-12px)';
-    setTimeout(function(){ resolve(kd===dir); }, 650);
+    if(kd==='L'){ kp.src=ASSETS+'keeper_left.png'; kp.style.transform='translate(calc(-50% - '+(0.17*W)+'px), -50%)'; }
+    else if(kd==='R'){ kp.src=ASSETS+'keeper_right.png'; kp.style.transform='translate(calc(-50% + '+(0.17*W)+'px), -50%)'; }
+    else { kp.style.transform='translate(-50%, calc(-50% - '+(0.07*H)+'px))'; }
+    setTimeout(function(){ resolve(kd===dir); }, 680);
   }
-  function shootConfetti(){
-    var c = document.createElement('div');
-    c.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;overflow:hidden';
-    document.body.appendChild(c);
-    var colors = ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#9b59b6', '#ffd54a'];
-    var particles = [];
-    var w = window.innerWidth, h = window.innerHeight;
-    for(var i=0; i<60; i++){
-      var p = document.createElement('div');
-      p.className = 'confetti';
-      p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-      c.appendChild(p);
-      particles.push({
-        el: p,
-        x: w * (0.2 + Math.random() * 0.6),
-        y: h + 10,
-        vx: (Math.random() - 0.5) * 18,
-        vy: -22 - Math.random() * 15,
-        angle: Math.random() * 360,
-        spin: (Math.random() - 0.5) * 15,
-        gravity: 0.45
-      });
-    }
-    var animId;
-    function frame(){
-      var active = false;
-      for(var i=0; i<particles.length; i++){
-        var pt = particles[i];
-        pt.x += pt.vx;
-        pt.y += pt.vy;
-        pt.vy += pt.gravity;
-        pt.vx *= 0.98;
-        pt.vy *= 0.98;
-        pt.angle += pt.spin;
-        pt.el.style.transform = 'translate3d(' + pt.x + 'px,' + pt.y + 'px,0) rotate(' + pt.angle + 'deg)';
-        if(pt.y < h + 50) active = true;
-      }
-      if(active) animId = requestAnimationFrame(frame);
-    }
-    animId = requestAnimationFrame(frame);
-    setTimeout(function(){ cancelAnimationFrame(animId); if(c.parentNode) c.parentNode.removeChild(c); }, 6000);
-  }
+
   function resolve(saved){
-    if(saved){ playSound('save'); setMsg('تصدّى الحارس!','#c0392b'); buzz('heavy'); setTimeout(gameOver,800); }
-    else{ playSound('goal'); score++; var sc=document.getElementById('sc'); if(sc)sc.textContent=score; setMsg('هدف!','#1e7d32'); buzz('medium');
-      setTimeout(function(){ var b=document.getElementById('bl'),k=document.getElementById('kp'); if(b)b.style.transform='translate(0,0)'; if(k)k.style.transform='translate(0,0)'; busy=false; setMsg(''); }, 800); }
+    var scene=document.getElementById('scene');
+    if(saved){
+      setMsg('صدّها الحارس! 🧤','#ff6b6b'); sfx('save'); buzz('heavy');
+      if(scene){ scene.classList.add('shake'); setTimeout(function(){scene.classList.remove('shake');},420); }
+      if(score>best){ best=score; }
+      setTimeout(over,1000);
+    } else {
+      score++; if(score>best){ best=score; }
+      setMsg('هدف! ⚽','#3fe08a'); sfx('goal'); buzz('medium');
+      var sc=document.getElementById('sc'); if(sc) sc.textContent=score;
+      var bs=document.getElementById('bs'); if(bs) bs.textContent=best;
+      if(score>=7){ confetti(); }
+      setTimeout(nextKick,950);
+    }
   }
-  function gameOver(){
-    best=Math.max(best,score); busy=false;
-    if(score > 6){ shootConfetti(); playSound('hooray'); }
-    app.innerHTML='<div class="over"><div style="font-size:20px;font-weight:600">انتهت الجولة</div>'
-      +'<div style="font-size:14px;color:var(--hint);margin-top:6px">سجّلت مع '+team.f+' '+team.n+'</div>'
-      +'<div class="big">'+score+'</div>'
-      +'<div style="font-size:13px;color:var(--hint)">أهداف متتالية · أفضل نتيجة: '+best+'</div>'
-      +'<div class="row"><button id="again">العب مجددًا</button><button id="chg">غيّر المنتخب</button>'
-      + (tg?'':'<button id="sub">أرسل النتيجة</button>') +'<button class="mute-btn" onclick="toggleMute(event)" style="padding:12px 16px;border-radius:14px;border:none;background:var(--card);color:var(--text);font-size:15px;cursor:pointer">'+(muted?'🔇':'🔊')+'</button></div>'
-      + (tg?'<div style="font-size:12px;color:var(--hint);margin-top:12px">اضغط الزر بالأسفل لإرسال نتيجتك واستلام رصيدك المجاني 🎁</div>':'<div style="font-size:12px;color:var(--hint);margin-top:12px">معاينة — داخل تيليجرام تُرسَل نتيجتك لاستلام رصيد التوقّعات</div>')
+  function nextKick(){
+    var kp=document.getElementById('kp'), bl=document.getElementById('bl');
+    if(kp){ kp.src=ASSETS+'keeper.png'; kp.style.transform='translate(-50%,-50%)'; }
+    if(bl){ bl.style.transition='none'; bl.style.transform='translate(-50%,-50%)'; void bl.offsetWidth; bl.style.transition=''; }
+    busy=false;
+  }
+
+  function over(){
+    var goalWord = best>10 ? 'سلسلة خارقة! 🔥' : (best>=5?'أداء رائع! 👏':'جولة جيدة');
+    var html='<div class="over">'
+      +'<div class="sub">انتهت الجولة مع '+team.f+' '+team.n+'</div>'
+      +'<div class="big">'+best+'</div>'
+      +'<div class="sub">أهداف متتالية · '+goalWord+'</div>'
+      +'<div class="reward">🎁 سجّل أكثر من 10 لتربح رصيد توقّع مجاني</div>'
+      +'<div class="row">'
+        +'<button class="btn gold" id="again">العب مجددًا</button>'
+        +'<button class="btn ghost" id="chg">غيّر المنتخب</button>'
+      +'</div>'
+      + (tg?'<div class="hint">اضغط «استلم رصيدك» بالأسفل لإرسال نتيجتك 🎁</div>'
+           :'<button class="btn" id="sub" style="margin-top:8px">أرسل النتيجة 🎁</button>')
       +'</div>';
-    document.getElementById('again').onclick=function(){ playSound('click'); score=0; gameScreen(); };
-    document.getElementById('chg').onclick=function(){ playSound('click'); score=0; selectScreen(); };
-    var sub=document.getElementById('sub'); if(sub) sub.onclick=submit;
+    var scene=document.getElementById('scene');
+    if(scene){ scene.insertAdjacentHTML('beforeend',html); }
+    else { app.innerHTML='<div class="scene">'+html+'</div>'; }
+    document.getElementById('again').onclick=function(){ sfx('click'); score=0; gameScreen(); };
+    document.getElementById('chg').onclick=function(){ sfx('click'); selectScreen(); };
+    var sub=document.getElementById('sub'); if(sub){ sub.onclick=submit; }
     showMain();
   }
+
+  /* ---------- submit (Telegram contract — unchanged) ---------- */
+  function submit(){ if(tg){ try{ tg.sendData(JSON.stringify({score:best,team:team?team.n:''})); tg.close(); }catch(e){} } }
+  function showMain(){ if(tg&&tg.MainButton){ tg.MainButton.setText('استلم رصيدك 🎁'); tg.MainButton.onClick(submit); tg.MainButton.show(); } }
+  function hideMain(){ if(tg&&tg.MainButton){ tg.MainButton.hide(); tg.MainButton.offClick(submit); } }
+
   selectScreen();
 })();
 </script>
