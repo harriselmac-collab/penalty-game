@@ -19,14 +19,21 @@
   .score-pill{font-size:22px;color:var(--cyan);min-width:54px;justify-content:center}
   .mute{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
   /* Scene */
-  .scene{position:relative;width:100%;aspect-ratio:3/2;border-radius:18px;overflow:hidden;background:#0a1a30 center/cover no-repeat;border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+  .scene{position:relative;width:100%;aspect-ratio:3/2;border-radius:18px;overflow:hidden;background-color:#0a1a30;background-repeat:no-repeat;background-position:50% 30%;background-size:134%;border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.4)}
   .scene.shake{animation:shake .4s}
+  .scene.shake-sm{animation:shake .28s}
   @keyframes shake{0%,100%{transform:translate(0,0)}20%{transform:translate(-5px,3px)}40%{transform:translate(5px,-3px)}60%{transform:translate(-4px,-2px)}80%{transform:translate(4px,2px)}}
-  #kp{position:absolute;left:50%;top:41%;width:30%;transform:translate(-50%,-50%);transition:transform .42s cubic-bezier(.3,.8,.3,1);filter:drop-shadow(0 6px 6px rgba(0,0,0,.45));z-index:3}
-  #bl{position:absolute;left:50%;top:70%;width:13%;transform:translate(-50%,-50%);transition:transform .55s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 5px 5px rgba(0,0,0,.5));z-index:4}
-  #kicker{position:absolute;left:30%;top:84%;width:26%;transform:translate(-50%,-50%) rotate(0deg);transform-origin:bottom center;transition:transform .25s ease;filter:drop-shadow(0 8px 8px rgba(0,0,0,.5));z-index:5}
-  #kicker.kick{transform:translate(-50%,-50%) rotate(-12deg)}
-  .msg{position:absolute;top:8%;left:50%;transform:translate(-50%,0);font-size:26px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.6);z-index:8;pointer-events:none;opacity:0}
+  #kp{position:absolute;left:50%;top:56%;width:32%;transform:translate(-50%,-100%);transition:transform .42s cubic-bezier(.3,.8,.3,1);filter:drop-shadow(0 5px 4px rgba(0,0,0,.5));z-index:3}
+  #bl{position:absolute;left:52%;top:80%;width:11%;transform:translate(-50%,-50%);transition:transform .55s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 5px 5px rgba(0,0,0,.5));z-index:4}
+  #kicker{position:absolute;left:30%;top:82%;width:27%;transform:translate(-50%,-100%) rotate(0deg);transform-origin:bottom center;transition:transform .25s ease;filter:drop-shadow(0 8px 8px rgba(0,0,0,.5));z-index:5}
+  #kicker.kick{transform:translate(-50%,-100%) rotate(-13deg)}
+  .fx{position:absolute;inset:0;pointer-events:none;z-index:6;opacity:0;mix-blend-mode:screen}
+  .fx.go{animation:flash .5s ease-out}
+  @keyframes flash{0%{opacity:0}12%{opacity:1}100%{opacity:0}}
+  .ring{position:absolute;width:16px;height:16px;border-radius:50%;border:5px solid #ffe27a;transform:translate(-50%,-50%) scale(.2);opacity:0;z-index:7;pointer-events:none}
+  .ring.go{animation:ring .55s ease-out}
+  @keyframes ring{0%{transform:translate(-50%,-50%) scale(.2);opacity:1}100%{transform:translate(-50%,-50%) scale(13);opacity:0}}
+  .msg{position:absolute;top:7%;left:50%;transform:translate(-50%,0);font-size:28px;font-weight:800;text-shadow:0 2px 8px rgba(0,0,0,.6);z-index:9;pointer-events:none;opacity:0}
   .msg.show{animation:pop .9s ease}
   @keyframes pop{0%{opacity:0;transform:translate(-50%,10px) scale(.7)}25%{opacity:1;transform:translate(-50%,0) scale(1.1)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-12px) scale(1)}}
   /* Controls */
@@ -68,7 +75,7 @@
     {f:'🇵🇹',n:'البرتغال',s:4},{f:'🇪🇸',n:'إسبانيا',s:4},{f:'🇩🇪',n:'ألمانيا',s:4},
     {f:'🇦🇷',n:'الأرجنتين',s:5},{f:'🇧🇷',n:'البرازيل',s:5},{f:'🇫🇷',n:'فرنسا',s:5}
   ];
-  var team=null, score=0, best=0, busy=false, muted=false, audioCtx=null;
+  var team=null, score=0, best=0, busy=false, muted=false, audioCtx=null, lastImpact=null;
   var app=document.getElementById('app');
 
   /* ---------- audio ---------- */
@@ -126,6 +133,7 @@
   }
   function sceneHTML(){
     return '<div class="scene" id="scene" style="background-image:url('+ASSETS+'stadium.jpg)">'
+      +'<div class="fx" id="fx"></div><div class="ring" id="ring"></div>'
       +'<div class="msg" id="msg"></div>'
       +'<img id="kp" src="'+ASSETS+'keeper.png" alt="">'
       +'<img id="kicker" src="'+ASSETS+'kicker.png" alt="">'
@@ -153,7 +161,7 @@
     var W=scene.clientWidth, H=scene.clientHeight;
     if(kicker){ kicker.classList.add('kick'); setTimeout(function(){kicker.classList.remove('kick');},260); }
     // ball targets (fraction of scene)
-    var T={L:{x:0.30,y:0.34},C:{x:0.50,y:0.30},R:{x:0.70,y:0.34}}, base={x:0.50,y:0.70};
+    var T={L:{x:0.30,y:0.36},C:{x:0.50,y:0.32},R:{x:0.70,y:0.36}}, base={x:0.52,y:0.80};
     var t=T[dir];
     setTimeout(function(){
       bl.style.transform='translate(calc(-50% + '+((t.x-base.x)*W)+'px), calc(-50% + '+((t.y-base.y)*H)+'px)) scale(0.42)';
@@ -161,9 +169,10 @@
     // keeper reads with a probability that drops for stronger teams
     var readProb=0.15+(5-team.s)*0.06, kd;
     if(Math.random()<readProb){ kd=dir; } else { var o=['L','C','R'].filter(function(d){return d!==dir;}); kd=o[Math.floor(Math.random()*o.length)]; }
-    if(kd==='L'){ kp.src=ASSETS+'keeper_left.png'; kp.style.transform='translate(calc(-50% - '+(0.17*W)+'px), -50%)'; }
-    else if(kd==='R'){ kp.src=ASSETS+'keeper_right.png'; kp.style.transform='translate(calc(-50% + '+(0.17*W)+'px), -50%)'; }
-    else { kp.style.transform='translate(-50%, calc(-50% - '+(0.07*H)+'px))'; }
+    if(kd==='L'){ kp.src=ASSETS+'keeper_left.png'; kp.style.transform='translate(calc(-50% - '+(0.19*W)+'px), -86%)'; }
+    else if(kd==='R'){ kp.src=ASSETS+'keeper_right.png'; kp.style.transform='translate(calc(-50% + '+(0.19*W)+'px), -86%)'; }
+    else { kp.style.transform='translate(-50%, calc(-100% - '+(0.08*H)+'px))'; }
+    lastImpact={x:t.x*W, y:t.y*H};
     setTimeout(function(){ resolve(kd===dir); }, 680);
   }
 
@@ -176,16 +185,25 @@
       setTimeout(over,1000);
     } else {
       score++; if(score>best){ best=score; }
-      setMsg('هدف! ⚽','#3fe08a'); sfx('goal'); buzz('medium');
+      setMsg('هدف! ⚽','#3fe08a'); sfx('goal'); buzz('medium'); goalImpact();
       var sc=document.getElementById('sc'); if(sc) sc.textContent=score;
       var bs=document.getElementById('bs'); if(bs) bs.textContent=best;
-      if(score>=7){ confetti(); }
+      if(score>=5){ confetti(); }
       setTimeout(nextKick,950);
     }
   }
+  function goalImpact(){
+    var scene=document.getElementById('scene'), ring=document.getElementById('ring'), fx=document.getElementById('fx');
+    var p=lastImpact||{x:0,y:0};
+    if(ring){ ring.style.left=p.x+'px'; ring.style.top=p.y+'px'; ring.classList.remove('go'); void ring.offsetWidth; ring.classList.add('go'); }
+    if(fx&&scene){ var px=p.x/scene.clientWidth*100, py=p.y/scene.clientHeight*100;
+      fx.style.background='radial-gradient(circle at '+px+'% '+py+'%, rgba(255,255,255,.95), rgba(255,255,255,0) 30%)';
+      fx.classList.remove('go'); void fx.offsetWidth; fx.classList.add('go'); }
+    if(scene){ scene.classList.remove('shake-sm'); void scene.offsetWidth; scene.classList.add('shake-sm'); setTimeout(function(){scene.classList.remove('shake-sm');},300); }
+  }
   function nextKick(){
     var kp=document.getElementById('kp'), bl=document.getElementById('bl');
-    if(kp){ kp.src=ASSETS+'keeper.png'; kp.style.transform='translate(-50%,-50%)'; }
+    if(kp){ kp.src=ASSETS+'keeper.png'; kp.style.transform='translate(-50%,-100%)'; }
     if(bl){ bl.style.transition='none'; bl.style.transform='translate(-50%,-50%)'; void bl.offsetWidth; bl.style.transition=''; }
     busy=false;
   }
