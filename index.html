@@ -28,7 +28,7 @@
   .tpow{font-size:12px;color:var(--hint)}
   .hud{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px;font-size:14px;font-weight:600}
   .msg{text-align:center;height:26px;font-size:18px;font-weight:600;margin:6px 0}
-  .aim{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+  .aim{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;direction:ltr}
   .aim button{padding:14px;border-radius:14px;border:none;background:var(--card);color:var(--text);font-size:16px;font-weight:600;cursor:pointer;transition:transform 0.15s ease, filter 0.15s ease}
   .aim button:active{transform:scale(0.96);filter:brightness(0.95)}
   .over{text-align:center;padding:18px 8px}
@@ -166,7 +166,7 @@
   }
 
   function hideMain(){ if(tg&&tg.MainButton){ tg.MainButton.hide(); tg.MainButton.offClick(submit); } }
-  function showMain(){ if(tg&&tg.MainButton){ tg.MainButton.setText('أرسل أفضل نتيجة 🏆'); tg.MainButton.onClick(submit); tg.MainButton.show(); } }
+  function showMain(){ if(tg&&tg.MainButton){ tg.MainButton.setText('استلم رصيدك 🎁'); tg.MainButton.onClick(submit); tg.MainButton.show(); } }
   function submit(){ if(tg){ try{ tg.sendData(JSON.stringify({score:best,team:team?team.n:''})); tg.close(); }catch(e){} } }
   function buzz(t){ if(tg&&tg.HapticFeedback){ try{ tg.HapticFeedback.impactOccurred(t||'medium'); }catch(e){} } }
   function setMsg(t,c){ var m=document.getElementById('msg'); if(m){ m.innerHTML=t?'<span class="pop">'+t+'</span>':''; m.style.color=c||'var(--text)'; } }
@@ -347,7 +347,7 @@
       +'<div style="font-size:13px;color:var(--hint)">أهداف متتالية · أفضل نتيجة: '+best+'</div>'
       +'<div class="row"><button id="again">العب مجددًا</button><button id="chg">غيّر المنتخب</button>'
       + (tg?'':'<button id="sub">أرسل النتيجة</button>') +'<button class="mute-btn" onclick="toggleMute(event)" style="padding:12px 16px;border-radius:14px;border:none;background:var(--card);color:var(--text);font-size:15px;cursor:pointer">'+(muted?'🔇':'🔊')+'</button></div>'
-      + (tg?'<div style="font-size:12px;color:var(--hint);margin-top:12px">اضغط الزر بالأسفل لإرسال نتيجتك إلى لوحة المتصدّرين</div>':'<div style="font-size:12px;color:var(--hint);margin-top:12px">معاينة — داخل تيليجرام تُرسَل النتيجة للوحة المتصدّرين</div>')
+      + (tg?'<div style="font-size:12px;color:var(--hint);margin-top:12px">اضغط الزر بالأسفل لإرسال نتيجتك واستلام رصيدك المجاني 🎁</div>':'<div style="font-size:12px;color:var(--hint);margin-top:12px">معاينة — داخل تيليجرام تُرسَل نتيجتك لاستلام رصيد التوقّعات</div>')
       +'</div>';
     document.getElementById('again').onclick=function(){ playSound('click'); score=0; gameScreen(); };
     document.getElementById('chg').onclick=function(){ playSound('click'); score=0; selectScreen(); };
