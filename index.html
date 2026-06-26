@@ -9,7 +9,7 @@
   :root{--bg:#0b1424;--card:#13233f;--card2:#1b3257;--line:#2b62a8;--cyan:#37c6ff;--gold:#ffc23d;--text:#eaf2ff;--hint:#9fb6d6;--green:#3fe08a;--red:#ff6b6b}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0;background:radial-gradient(120% 90% at 50% 0%,#16294a 0%,#0b1424 70%);color:var(--text);font-family:-apple-system,'Segoe UI',Tahoma,Arial,sans-serif;overflow-x:hidden}
-  #app{max-width:480px;margin:0 auto;padding:10px 12px 18px;min-height:100vh}
+  #app{max-width:480px;margin:0 auto;padding:14px 18px 22px;min-height:100vh}
   .title{text-align:center;font-size:18px;font-weight:700;letter-spacing:.3px;margin:6px 0 10px;color:var(--text)}
   .title b{color:var(--gold)}
   /* HUD */
@@ -23,8 +23,16 @@
   .scene.shake{animation:shake .4s}
   .scene.shake-sm{animation:shake .28s}
   @keyframes shake{0%,100%{transform:translate(0,0)}20%{transform:translate(-5px,3px)}40%{transform:translate(5px,-3px)}60%{transform:translate(-4px,-2px)}80%{transform:translate(4px,2px)}}
-  #kp{position:absolute;left:50%;top:45%;width:29%;transform:translate(-50%,-50%);transition:transform .42s cubic-bezier(.3,.8,.3,1);filter:drop-shadow(0 4px 3px rgba(0,0,0,.5));z-index:3}
-  #bl{position:absolute;left:50%;top:78%;width:10%;transform:translate(-50%,-50%);transition:transform .55s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 5px 5px rgba(0,0,0,.5));z-index:4}
+  #kp{position:absolute;left:50%;top:47%;width:29%;transform:translate(-50%,-50%);transition:transform .42s cubic-bezier(.3,.8,.3,1);filter:drop-shadow(0 4px 3px rgba(0,0,0,.5));z-index:3}
+  #bl{position:absolute;left:50%;top:78%;width:12%;transform:translate(-50%,-50%);transition:transform .55s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 5px 5px rgba(0,0,0,.5));z-index:4}
+  .reticle{position:absolute;width:8.5%;transform:translate(-50%,-50%);opacity:.42;z-index:2;pointer-events:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.4))}
+  .reticle.hot{opacity:.95;animation:retPulse .5s ease}
+  @keyframes retPulse{0%{transform:translate(-50%,-50%) scale(1)}40%{transform:translate(-50%,-50%) scale(1.35)}100%{transform:translate(-50%,-50%) scale(1)}}
+  .banner{position:absolute;top:5%;left:50%;width:64%;transform:translate(-50%,0) scale(.7);z-index:9;opacity:0;pointer-events:none;text-align:center}
+  .banner img{width:100%;display:block;filter:drop-shadow(0 4px 6px rgba(0,0,0,.5))}
+  .banner span{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);color:#fff;font-weight:800;font-size:23px;text-shadow:0 2px 3px rgba(0,0,0,.55);white-space:nowrap}
+  .banner.show{animation:bannerPop 1.05s ease}
+  @keyframes bannerPop{0%{opacity:0;transform:translate(-50%,8px) scale(.6)}18%{opacity:1;transform:translate(-50%,0) scale(1.1)}75%{opacity:1;transform:translate(-50%,0) scale(1)}100%{opacity:0;transform:translate(-50%,-10px) scale(1)}}
   #kicker{position:absolute;left:36%;top:94%;width:17%;transform:translate(-50%,-100%) rotate(0deg);transform-origin:bottom center;transition:transform .25s ease;filter:drop-shadow(0 8px 8px rgba(0,0,0,.5));z-index:5}
   #kicker.kick{transform:translate(-50%,-100%) rotate(-13deg)}
   .fx{position:absolute;inset:0;pointer-events:none;z-index:6;opacity:0;mix-blend-mode:screen}
@@ -56,6 +64,10 @@
   .team .stars{margin-inline-start:auto;color:var(--gold);font-size:12px;letter-spacing:1px}
   .over{position:absolute;inset:0;background:rgba(6,14,28,.82);backdrop-filter:blur(2px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;z-index:20;border-radius:18px;padding:18px}
   .over .big{font-size:46px;font-weight:800;color:var(--gold);line-height:1}
+  .scorepanel{position:relative;width:178px;margin:0 auto}
+  .scorepanel img{width:100%;display:block}
+  .panelbig{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);font-size:50px;font-weight:800;color:var(--gold);text-shadow:0 2px 5px rgba(0,0,0,.7)}
+  .reward .coin{width:24px;height:24px;vertical-align:-6px;margin-inline-end:5px}
   .over .sub{color:var(--hint);font-size:14px}
   .over .reward{font-size:16px;font-weight:700}
   .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
@@ -134,10 +146,14 @@
   function sceneHTML(){
     return '<div class="scene" id="scene" style="background-image:url('+ASSETS+'stadium.jpg)">'
       +'<div class="fx" id="fx"></div><div class="ring" id="ring"></div>'
+      +'<img class="reticle" id="rL" style="left:30%;top:43%" src="'+ASSETS+'target.png" alt="">'
+      +'<img class="reticle" id="rC" style="left:50%;top:30%" src="'+ASSETS+'target.png" alt="">'
+      +'<img class="reticle" id="rR" style="left:70%;top:43%" src="'+ASSETS+'target.png" alt="">'
       +'<div class="msg" id="msg"></div>'
       +'<img id="kp" src="'+ASSETS+'keeper.png" alt="">'
       +'<img id="kicker" src="'+ASSETS+'kicker.png" alt="">'
       +'<img id="bl" src="'+ASSETS+'ball.png" alt="">'
+      +'<div class="banner" id="banner"><img src="'+ASSETS+'banner.png" alt=""><span id="bannerTxt"></span></div>'
       +'</div>';
   }
   function gameScreen(){
@@ -154,6 +170,8 @@
   }
 
   function setMsg(t,c){ var m=document.getElementById('msg'); if(!m) return; m.textContent=t; m.style.color=c||'#fff'; m.classList.remove('show'); void m.offsetWidth; m.classList.add('show'); }
+  function showBanner(t){ var b=document.getElementById('banner'), s=document.getElementById('bannerTxt'); if(!b||!s) return; s.textContent=t; b.classList.remove('show'); void b.offsetWidth; b.classList.add('show'); }
+  function pulseReticle(dir){ var r=document.getElementById('r'+dir); if(!r) return; r.classList.remove('hot'); void r.offsetWidth; r.classList.add('hot'); setTimeout(function(){ r.classList.remove('hot'); }, 520); }
 
   function shoot(dir){
     if(busy||!team) return; busy=true; sfx('shoot'); buzz('light');
@@ -161,7 +179,8 @@
     var W=scene.clientWidth, H=scene.clientHeight;
     if(kicker){ kicker.classList.add('kick'); setTimeout(function(){kicker.classList.remove('kick');},260); }
     // ball targets (fraction of scene)
-    var T={L:{x:0.32,y:0.46},C:{x:0.50,y:0.40},R:{x:0.68,y:0.46}}, base={x:0.50,y:0.78};
+    pulseReticle(dir);
+    var T={L:{x:0.30,y:0.43},C:{x:0.50,y:0.30},R:{x:0.70,y:0.43}}, base={x:0.50,y:0.78};
     var t=T[dir];
     setTimeout(function(){
       bl.style.transform='translate(calc(-50% + '+((t.x-base.x)*W)+'px), calc(-50% + '+((t.y-base.y)*H)+'px)) scale(0.42)';
@@ -179,13 +198,13 @@
   function resolve(saved){
     var scene=document.getElementById('scene');
     if(saved){
-      setMsg('صدّها الحارس! 🧤','#ff6b6b'); sfx('save'); buzz('heavy');
+      showBanner('تصدّى! 🧤'); sfx('save'); buzz('heavy');
       if(scene){ scene.classList.add('shake'); setTimeout(function(){scene.classList.remove('shake');},420); }
       if(score>best){ best=score; }
       setTimeout(over,1000);
     } else {
       score++; if(score>best){ best=score; }
-      setMsg('هدف! ⚽','#3fe08a'); sfx('goal'); buzz('medium'); goalImpact();
+      showBanner('هدف! ⚽'); sfx('goal'); buzz('medium'); goalImpact();
       var sc=document.getElementById('sc'); if(sc) sc.textContent=score;
       var bs=document.getElementById('bs'); if(bs) bs.textContent=best;
       if(score>=5){ confetti(); }
@@ -212,9 +231,9 @@
     var goalWord = best>10 ? 'سلسلة خارقة! 🔥' : (best>=5?'أداء رائع! 👏':'جولة جيدة');
     var html='<div class="over">'
       +'<div class="sub">انتهت الجولة مع '+team.f+' '+team.n+'</div>'
-      +'<div class="big">'+best+'</div>'
+      +'<div class="scorepanel"><img src="'+ASSETS+'panel.png" alt=""><span class="panelbig">'+best+'</span></div>'
       +'<div class="sub">أهداف متتالية · '+goalWord+'</div>'
-      +'<div class="reward">🎁 سجّل أكثر من 10 لتربح رصيد توقّع مجاني</div>'
+      +'<div class="reward"><img class="coin" src="'+ASSETS+'credit.png" alt=""> سجّل أكثر من 10 لتربح رصيد توقّع مجاني</div>'
       +'<div class="row">'
         +'<button class="btn gold" id="again">العب مجددًا</button>'
         +'<button class="btn ghost" id="chg">غيّر المنتخب</button>'
