@@ -60,11 +60,16 @@
   .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.3)}
   .btn.ghost{background:var(--card2);color:var(--text);border:1px solid var(--line)}
   .btn.gold{background:linear-gradient(180deg,#ffd96b,#f3a91c)}
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:8px}
-  .team{display:flex;align-items:center;gap:10px;padding:13px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,var(--card2),var(--card));color:var(--text);cursor:pointer;font-size:15px;font-weight:600;text-align:right;transition:transform .12s,filter .12s}
-  .team:active{transform:scale(.97)}
-  .team .flag{font-size:24px}
-  .team .stars{margin-inline-start:auto;color:var(--gold);font-size:12px;letter-spacing:1px}
+  .seltitle{text-align:center;font-size:17px;font-weight:800;color:var(--gold);margin:4px 0 2px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:10px}
+  .team{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;padding:15px 8px 13px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(180deg,#21426f,#152a48);cursor:pointer;transition:transform .1s,box-shadow .1s;box-shadow:0 3px 0 rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08)}
+  .team:active{transform:translateY(3px);box-shadow:0 0 0 rgba(0,0,0,.35)}
+  .team .flag{font-size:36px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.45))}
+  .team .tn{font-size:15px;font-weight:700;color:#fff}
+  .ease{font-size:11px;font-weight:800;padding:3px 13px;border-radius:20px;letter-spacing:.3px}
+  .ease.e1{background:linear-gradient(180deg,#c64545,#7e2424);color:#ffe2e2}
+  .ease.e2{background:linear-gradient(180deg,#d99a2e,#9a6a13);color:#3a2400}
+  .ease.e3{background:linear-gradient(180deg,#43c06f,#23824a);color:#06280f}
   .over{position:absolute;inset:0;background:rgba(6,14,28,.82);backdrop-filter:blur(2px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;z-index:20;border-radius:18px;padding:18px}
   .over .big{font-size:46px;font-weight:800;color:var(--gold);line-height:1}
   .scorepanel{position:relative;width:178px;margin:0 auto}
@@ -127,9 +132,11 @@
   function selectScreen(){
     hideMain(); team=null; score=0;
     var html='<div class="logo"><img src="'+ASSETS+'logo.png" alt=""><span class="logo-title">ركلات الترجيح</span></div>'
-      +'<div class="hint">اختر منتخبك — كلما كان أقوى، صار التسجيل أسهل ضد حارس الخصم 🧤</div><div class="grid">';
+      +'<div class="seltitle">اختر منتخبك 🐱</div>'
+      +'<div class="hint">كلما كان المنتخب أقوى، صار التسجيل أسهل ضد الحارس</div><div class="grid">';
     teams.forEach(function(t,i){
-      html+='<button class="team" data-i="'+i+'"><span class="flag">'+t.f+'</span><span>'+t.n+'</span><span class="stars">'+stars(t.s)+'</span></button>';
+      var e = t.s>=5?['e3','سهل جدًا']:(t.s===4?['e3','سهل']:(t.s===3?['e2','متوسط']:['e1','صعب']));
+      html+='<button class="team" data-i="'+i+'"><span class="flag">'+t.f+'</span><span class="tn">'+t.n+'</span><span class="ease '+e[0]+'">'+e[1]+'</span></button>';
     });
     html+='</div>';
     app.innerHTML=html;
