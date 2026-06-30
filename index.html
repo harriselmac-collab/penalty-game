@@ -63,16 +63,15 @@
   .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.3)}
   .btn.ghost{background:var(--card2);color:var(--text);border:1px solid var(--line)}
   .btn.gold{background:linear-gradient(180deg,#ffd96b,#f3a91c)}
-  .seltitle{text-align:center;font-size:17px;font-weight:800;color:var(--gold);margin:4px 0 2px}
-  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:10px}
-  .team{position:relative;display:flex;flex-direction:column;align-items:center;gap:7px;padding:15px 8px 13px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(180deg,#21426f,#152a48);cursor:pointer;transition:transform .1s,box-shadow .1s;box-shadow:0 3px 0 rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.08)}
-  .team:active{transform:translateY(3px);box-shadow:0 0 0 rgba(0,0,0,.35)}
-  .team .flag{font-size:36px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.45))}
-  .team .tn{font-size:15px;font-weight:700;color:#fff}
-  .ease{font-size:11px;font-weight:800;padding:3px 13px;border-radius:20px;letter-spacing:.3px}
-  .ease.e1{background:linear-gradient(180deg,#c64545,#7e2424);color:#ffe2e2}
-  .ease.e2{background:linear-gradient(180deg,#d99a2e,#9a6a13);color:#3a2400}
-  .ease.e3{background:linear-gradient(180deg,#43c06f,#23824a);color:#06280f}
+  .info{background:linear-gradient(180deg,#1c4f86,#13396a);border:1px solid #2f6fb0;border-radius:14px;padding:11px 13px;font-size:13px;line-height:1.55;color:#dceaff;margin:6px 0 4px;text-align:center}
+  .seltitle{text-align:center;font-size:16px;font-weight:800;color:var(--gold);margin:8px 0 8px}
+  .match{display:flex;align-items:stretch;border-radius:16px;overflow:hidden;margin-bottom:12px;box-shadow:0 3px 0 rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.14);min-height:94px}
+  .mteam{flex:1;appearance:none;border:none;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:12px 6px;color:#fff;transition:transform .1s}
+  .mteam:active{transform:scale(.94)}
+  .mteam .mf{font-size:30px;line-height:1;filter:drop-shadow(0 2px 2px rgba(0,0,0,.55))}
+  .mteam .mn{font-size:15px;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.65)}
+  .mteam .mg{font-size:12px;font-weight:600;opacity:.9;text-shadow:0 1px 2px rgba(0,0,0,.65)}
+  .mvs{flex:0 0 auto;align-self:center;background:rgba(0,0,0,.5);color:#fff;font-weight:800;font-size:12px;padding:6px 9px;border-radius:20px;border:1px solid rgba(255,255,255,.35);z-index:2}
   .over{position:absolute;inset:0;background:rgba(6,14,28,.82);backdrop-filter:blur(2px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;z-index:20;border-radius:18px;padding:18px}
   .over .big{font-size:46px;font-weight:800;color:var(--gold);line-height:1}
   .scorepanel{position:relative;width:178px;margin:0 auto}
@@ -92,13 +91,16 @@
   var tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
   if(tg){ try{ tg.ready(); tg.expand(); }catch(e){} }
   var ASSETS='assets/';
-  var teams = [
-    {f:'🇸🇦',n:'السعودية',s:2},{f:'🇪🇬',n:'مصر',s:2},{f:'🇶🇦',n:'قطر',s:2},
-    {f:'🇲🇦',n:'المغرب',s:3},{f:'🇸🇳',n:'السنغال',s:3},{f:'🇳🇱',n:'هولندا',s:4},
-    {f:'🇵🇹',n:'البرتغال',s:4},{f:'🇪🇸',n:'إسبانيا',s:4},{f:'🇩🇪',n:'ألمانيا',s:4},
-    {f:'🇦🇷',n:'الأرجنتين',s:5},{f:'🇧🇷',n:'البرازيل',s:5},{f:'🇫🇷',n:'فرنسا',s:5}
+  var matches = [
+    [{f:'🇳🇱',n:'هولندا',c:'#ea6d1a',g:8041177},{f:'🇦🇷',n:'الأرجنتين',c:'#6ca7dc',g:5598318}],
+    [{f:'🇧🇷',n:'البرازيل',c:'#1f9e4a',g:7233901},{f:'🇩🇪',n:'ألمانيا',c:'#3a3f47',g:6120447}],
+    [{f:'🇫🇷',n:'فرنسا',c:'#23449e',g:5904122},{f:'🇪🇸',n:'إسبانيا',c:'#cc1b2c',g:4877650}],
+    [{f:'🇵🇹',n:'البرتغال',c:'#b02323',g:4512330},{f:'🇲🇦',n:'المغرب',c:'#11774a',g:3998210}],
+    [{f:'🇸🇳',n:'السنغال',c:'#13863c',g:3598518},{f:'🇶🇦',n:'قطر',c:'#7a1b3a',g:2854393}],
+    [{f:'🇸🇦',n:'السعودية',c:'#1b7a44',g:3104560},{f:'🇪🇬',n:'مصر',c:'#cc2233',g:2640880}]
   ];
-  var team=null, score=0, best=0, busy=false, muted=false, audioCtx=null, lastImpact=null;
+  var team=null, opp=null, score=0, best=0, busy=false, muted=false, audioCtx=null, lastImpact=null;
+  function fmt(n){ return n.toLocaleString('en-US'); }
   var app=document.getElementById('app');
 
   /* ---------- audio ---------- */
@@ -135,16 +137,19 @@
   function selectScreen(){
     hideMain(); team=null; score=0;
     var html='<div class="logo"><img src="'+ASSETS+'logo.png" alt=""><span class="logo-title">ركلات الترجيح</span></div>'
-      +'<div class="seltitle">اختر منتخبك 🐱</div>'
-      +'<div class="hint">كلما كان المنتخب أقوى، صار التسجيل أسهل ضد الحارس</div><div class="grid">';
-    teams.forEach(function(t,i){
-      var e = t.s>=5?['e3','سهل جدًا']:(t.s===4?['e3','سهل']:(t.s===3?['e2','متوسط']:['e1','صعب']));
-      html+='<button class="team" data-i="'+i+'"><span class="flag">'+t.f+'</span><span class="tn">'+t.n+'</span><span class="ease '+e[0]+'">'+e[1]+'</span></button>';
+      +'<div class="info">🧤 سجّل أكبر عدد من الأهداف المتتالية! تبدأ سهلة، ويصبح الحارس أسرع مع كل هدف.</div>'
+      +'<div class="seltitle">اختر مباراتك — اضغط على منتخبك</div>';
+    matches.forEach(function(m,mi){
+      var a=m[0], b=m[1];
+      html+='<div class="match" style="background:linear-gradient(100deg,'+b.c+' 0 44%,'+a.c+' 56% 100%)">'
+        +'<button class="mteam" data-mi="'+mi+'" data-si="0"><span class="mf">'+a.f+'</span><span class="mn">'+a.n+'</span><span class="mg">'+fmt(a.g)+'</span></button>'
+        +'<span class="mvs">🆚</span>'
+        +'<button class="mteam" data-mi="'+mi+'" data-si="1"><span class="mf">'+b.f+'</span><span class="mn">'+b.n+'</span><span class="mg">'+fmt(b.g)+'</span></button>'
+        +'</div>';
     });
-    html+='</div>';
     app.innerHTML=html;
-    Array.prototype.forEach.call(app.querySelectorAll('.team'),function(b){
-      b.onclick=function(){ sfx('click'); team=teams[+b.getAttribute('data-i')]; score=0; gameScreen(); };
+    Array.prototype.forEach.call(app.querySelectorAll('.mteam'),function(btn){
+      btn.onclick=function(){ sfx('click'); var m=matches[+btn.getAttribute('data-mi')], si=+btn.getAttribute('data-si'); team=m[si]; opp=m[1-si]; score=0; gameScreen(); };
     });
   }
 
@@ -199,7 +204,7 @@
       bl.style.transform='translate(calc(-50% + '+((t.x-base.x)*W)+'px), calc(-50% + '+((t.y-base.y)*H)+'px)) scale(0.42)';
     },120);
     // keeper reads with a probability that drops for stronger teams
-    var readProb=0.15+(5-team.s)*0.06, kd;
+    var readProb=Math.min(0.10+score*0.05, 0.82), kd;
     if(Math.random()<readProb){ kd=dir; } else { var o=['L','C','R'].filter(function(d){return d!==dir;}); kd=o[Math.floor(Math.random()*o.length)]; }
     if(kd==='L'){ kp.src=ASSETS+'keeper_left.png'; kp.style.transform='translate(calc(-50% - '+(0.19*W)+'px), -52%)'; }
     else if(kd==='R'){ kp.src=ASSETS+'keeper_right.png'; kp.style.transform='translate(calc(-50% + '+(0.19*W)+'px), -52%)'; }
@@ -243,7 +248,7 @@
   function over(){
     var goalWord = best>10 ? 'سلسلة خارقة! 🔥' : (best>=5?'أداء رائع! 👏':'جولة جيدة');
     var html='<div class="over">'
-      +'<div class="sub">انتهت الجولة مع '+team.f+' '+team.n+'</div>'
+      +'<div class="sub">'+team.f+' '+team.n+(opp?' 🆚 '+opp.f+' '+opp.n:'')+'</div>'
       +'<div class="scorepanel"><img src="'+ASSETS+'panel.png" alt=""><span class="panelbig">'+best+'</span></div>'
       +'<div class="sub">أهداف متتالية · '+goalWord+'</div>'
       +'<div class="reward"><img class="coin" src="'+ASSETS+'credit.png" alt=""> سجّل أكثر من 10 لتربح رصيد توقّع مجاني</div>'
