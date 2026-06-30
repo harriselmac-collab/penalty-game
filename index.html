@@ -48,13 +48,16 @@
   .msg.show{animation:pop .9s ease}
   @keyframes pop{0%{opacity:0;transform:translate(-50%,10px) scale(.7)}25%{opacity:1;transform:translate(-50%,0) scale(1.1)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-12px) scale(1)}}
   /* Controls */
-  .aim{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;direction:ltr}
-  .aim button{appearance:none;border:none;cursor:pointer;border-radius:16px;padding:14px 6px 11px;font-size:14px;font-weight:700;color:#06203a;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:0 4px 0 rgba(0,0,0,.35);transition:transform .08s}
-  .aim button:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
-  .aim button .ar{font-size:22px;line-height:1}
-  .aim .b-side{background:linear-gradient(180deg,#67d3ff,#1aa3e8)}
-  .aim .b-mid{background:linear-gradient(180deg,#ffd96b,#f3a91c)}
-  .aim button .lbl{font-family:inherit}
+  .aim{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:14px;direction:ltr}
+  .aim button{position:relative;appearance:none;border:none;cursor:pointer;border-radius:19px;padding:15px 6px 14px;color:#06203a;display:flex;flex-direction:column;align-items:center;gap:4px;overflow:hidden;transition:transform .07s,box-shadow .07s}
+  .aim button::before{content:'';position:absolute;top:2px;left:8%;right:8%;height:42%;background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,0));border-radius:0 0 50% 50%;pointer-events:none}
+  .aim button:active{transform:translateY(5px)}
+  .aim button .ar{font-size:28px;line-height:1;filter:drop-shadow(0 1px 0 rgba(255,255,255,.45))}
+  .aim button .lbl{font-size:14px;font-weight:800}
+  .aim .b-side{background:linear-gradient(180deg,#73d9ff,#1c9fe6);box-shadow:0 6px 0 #0c6699,0 9px 12px rgba(0,0,0,.4)}
+  .aim .b-side:active{box-shadow:0 1px 0 #0c6699,0 2px 5px rgba(0,0,0,.4)}
+  .aim .b-mid{background:linear-gradient(180deg,#ffde7a,#f2a516);box-shadow:0 6px 0 #b06f0a,0 9px 12px rgba(0,0,0,.4)}
+  .aim .b-mid:active{box-shadow:0 1px 0 #b06f0a,0 2px 5px rgba(0,0,0,.4)}
   /* Buttons / screens */
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;border-radius:14px;padding:13px 18px;font-size:15px;font-weight:700;color:#06203a;background:linear-gradient(180deg,#67d3ff,#1aa3e8);box-shadow:0 4px 0 rgba(0,0,0,.3);transition:transform .08s}
   .btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.3)}
