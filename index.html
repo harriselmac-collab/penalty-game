@@ -128,9 +128,9 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
 .prog-coin img{width:13px;height:13px}
 
 /* --- STAGE (the ~70%) --- */
-.stage{flex:1 1 auto;position:relative;margin:8px 10px 0;min-height:0;display:flex;align-items:center;justify-content:center}
-.scene{position:relative;height:100%;aspect-ratio:788/1400;max-width:100%;border-radius:22px;overflow:hidden;background-color:#06131f;
-  background-repeat:no-repeat;background-position:50% 50%;background-size:cover;
+.stage{flex:1 1 auto;position:relative;margin:6px 6px 0;min-height:0}
+.scene{position:absolute;inset:0;border-radius:20px;overflow:hidden;background-color:#06131f;
+  background-repeat:no-repeat;background-position:50% 46%;background-size:cover;
   border:2px solid #244d80;box-shadow:0 14px 34px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.06);
   animation:rise .55s var(--e-out) .05s both}
 .scene.shake{animation:shake .4s}
@@ -164,12 +164,16 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   filter:drop-shadow(0 2px 3px rgba(0,0,0,.6));transform-origin:bottom center;animation:wave 3s ease-in-out infinite}
 .cflag.l{inset-inline-start:4%}.cflag.r{inset-inline-end:4%;animation-delay:-1.5s}
 
-#kp{position:absolute;left:50%;top:52%;width:30%;transform:translate(-50%,-50%);
+#kp{position:absolute;left:50%;top:49%;width:29%;transform:translate(-50%,-50%);transform-origin:50% 100%;
   transition:transform .4s cubic-bezier(.3,.8,.3,1);filter:drop-shadow(0 6px 5px rgba(0,0,0,.55));z-index:4}
-#kp.idle{animation:breathe 2.8s ease-in-out infinite}
-#bl{position:absolute;left:50%;top:70%;width:12%;transform:translate(-50%,-50%);
-  transition:transform .55s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 6px 6px rgba(0,0,0,.5));z-index:6}
-#bl.idle{animation:bob 2.4s ease-in-out infinite}
+#kp.idle{animation:kbreathe 2.8s ease-in-out infinite}  /* scales upper body only; feet stay planted */
+#bl{position:absolute;left:50%;top:68%;width:11%;transform:translate(-50%,-50%);
+  transition:transform .55s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 4px 4px rgba(0,0,0,.45));z-index:6}
+/* ground contact shadows keep the keeper + ball visually planted on the grass */
+.gsh{position:absolute;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;z-index:3;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,.55),rgba(0,0,0,0) 72%)}
+#kpSh{left:50%;top:55.5%;width:18%;height:3.6%}
+#blSh{left:50%;top:71%;width:9%;height:2.3%}
 #kicker{position:absolute;left:40%;top:99%;width:21%;transform:translate(-50%,-100%) rotate(0);
   transform-origin:bottom center;transition:transform .24s ease;filter:drop-shadow(0 10px 9px rgba(0,0,0,.55));z-index:5}
 #kicker.kick{transform:translate(-50%,-100%) rotate(-14deg)}
@@ -263,6 +267,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
 @keyframes drop{0%{opacity:0;transform:translateY(-26px) scale(.9)}100%{opacity:1;transform:none}}
 @keyframes rise{0%{opacity:0;transform:translateY(16px)}100%{opacity:1;transform:none}}
 @keyframes breathe{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.04)}}
+@keyframes kbreathe{0%,100%{transform:translate(-50%,-50%) scaleY(1)}50%{transform:translate(-50%,-50%) scaleY(1.03)}}
 @keyframes bob{0%,100%{transform:translate(-50%,-50%) translateY(0)}50%{transform:translate(-50%,-50%) translateY(-5px)}}
 @keyframes wave{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
 @keyframes vspulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.09)}}
@@ -424,12 +429,14 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
       +'<div class="crowd" id="crowd"></div>'
       +'<div class="net" id="net"></div>'
       +'<div class="fx" id="fx"></div><div class="ring" id="ring"></div>'
-      +'<img class="reticle" id="rL" style="left:30%;top:42%" src="'+ASSETS+'target.png" alt="">'
-      +'<img class="reticle" id="rC" style="left:50%;top:37%" src="'+ASSETS+'target.png" alt="">'
-      +'<img class="reticle" id="rR" style="left:70%;top:42%" src="'+ASSETS+'target.png" alt="">'
+      +'<img class="reticle" id="rL" style="left:30%;top:45%" src="'+ASSETS+'target.png" alt="">'
+      +'<img class="reticle" id="rC" style="left:50%;top:40%" src="'+ASSETS+'target.png" alt="">'
+      +'<img class="reticle" id="rR" style="left:70%;top:45%" src="'+ASSETS+'target.png" alt="">'
+      +'<div class="gsh" id="kpSh"></div>'
       +'<img id="kp" class="idle" src="'+ASSETS+'keeper.png" alt="">'
       +'<img id="kicker" src="'+ASSETS+'kicker.png" alt="">'
-      +'<img id="bl" class="idle" src="'+ASSETS+'ball.png" alt="">'
+      +'<div class="gsh" id="blSh"></div>'
+      +'<img id="bl" src="'+ASSETS+'ball.png" alt="">'
       +'<span class="cflag l">'+team.f+'</span><span class="cflag r">'+opp.f+'</span>'
       +'<div class="combo" id="combo"></div><div class="msg" id="msg"></div>'
       +'<div class="banner" id="banner"><img src="'+ASSETS+'banner.png" alt=""><span id="bannerTxt"></span></div>'
@@ -465,7 +472,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
     if(kp) kp.classList.remove('idle'); if(bl) bl.classList.remove('idle');
     if(kicker){ kicker.classList.add('kick'); setTimeout(function(){kicker.classList.remove('kick');},260); }
     pulseReticle(dir);
-    var T={L:{x:0.30,y:0.42},C:{x:0.50,y:0.38},R:{x:0.70,y:0.42}}, base={x:0.50,y:0.70};
+    var T={L:{x:0.30,y:0.45},C:{x:0.50,y:0.40},R:{x:0.70,y:0.45}}, base={x:0.50,y:0.68};
     var t=T[dir];
     setTimeout(function(){
       bl.style.transform='translate(calc(-50% + '+((t.x-base.x)*W)+'px), calc(-50% + '+((t.y-base.y)*H)+'px)) scale(0.42)';
@@ -524,7 +531,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   function nextKick(){
     var kp=document.getElementById('kp'), bl=document.getElementById('bl');
     if(kp){ kp.src=ASSETS+'keeper.png'; kp.style.transform='translate(-50%,-50%)'; kp.classList.add('idle'); }
-    if(bl){ bl.style.transition='none'; bl.style.transform='translate(-50%,-50%)'; void bl.offsetWidth; bl.style.transition=''; bl.classList.add('idle'); }
+    if(bl){ bl.style.transition='none'; bl.style.transform='translate(-50%,-50%)'; void bl.offsetWidth; bl.style.transition=''; }  /* ball rests still on the spot — no idle bounce */
     busy=false;
   }
 
