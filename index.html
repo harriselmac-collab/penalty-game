@@ -130,7 +130,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
 /* --- STAGE (the ~70%) --- */
 .stage{flex:1 1 auto;position:relative;margin:8px 10px 0;min-height:0}
 .scene{position:absolute;inset:0;border-radius:22px;overflow:hidden;background-color:#06131f;
-  background-repeat:no-repeat;background-position:50% 42%;background-size:214%;
+  background-repeat:no-repeat;background-position:50% 50%;background-size:cover;
   border:2px solid #244d80;box-shadow:0 14px 34px rgba(0,0,0,.5),inset 0 0 0 1px rgba(255,255,255,.06);
   animation:rise .55s var(--e-out) .05s both}
 .scene.shake{animation:shake .4s}
@@ -148,12 +148,12 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   background:radial-gradient(circle,rgba(255,255,240,.7),rgba(255,255,240,0) 68%);filter:blur(4px);
   animation:pulseGlow 3.6s ease-in-out infinite}
 .bloom.l{left:2%}.bloom.r{right:2%}
-.crowd{position:absolute;top:6%;left:0;right:0;height:20%;z-index:1;pointer-events:none;opacity:.5;
+.crowd{position:absolute;top:19%;left:0;right:0;height:14%;z-index:1;pointer-events:none;opacity:.4;
   background:radial-gradient(rgba(255,255,255,.5) 22%,transparent 23%) 0 0/7px 7px;
   mask:linear-gradient(180deg,#000,transparent);-webkit-mask:linear-gradient(180deg,#000,transparent);
   animation:crowd 2.6s steps(2) infinite}
 .crowd.roar{animation:roar .7s ease}
-.net{position:absolute;top:20%;left:26%;right:26%;height:26%;z-index:2;pointer-events:none;opacity:.28;
+.net{position:absolute;top:31%;left:18%;right:18%;height:26%;z-index:2;pointer-events:none;opacity:.14;
   background:repeating-linear-gradient(60deg,rgba(255,255,255,.6) 0 1px,transparent 1px 9px),
              repeating-linear-gradient(-60deg,rgba(255,255,255,.6) 0 1px,transparent 1px 9px);
   border-radius:8px 8px 0 0}
@@ -164,13 +164,13 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   filter:drop-shadow(0 2px 3px rgba(0,0,0,.6));transform-origin:bottom center;animation:wave 3s ease-in-out infinite}
 .cflag.l{inset-inline-start:4%}.cflag.r{inset-inline-end:4%;animation-delay:-1.5s}
 
-#kp{position:absolute;left:50%;top:44%;width:34%;transform:translate(-50%,-50%);
+#kp{position:absolute;left:50%;top:47%;width:29%;transform:translate(-50%,-50%);
   transition:transform .4s cubic-bezier(.3,.8,.3,1);filter:drop-shadow(0 6px 5px rgba(0,0,0,.55));z-index:4}
 #kp.idle{animation:breathe 2.8s ease-in-out infinite}
-#bl{position:absolute;left:50%;top:82%;width:14%;transform:translate(-50%,-50%);
+#bl{position:absolute;left:50%;top:71%;width:12%;transform:translate(-50%,-50%);
   transition:transform .55s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 6px 6px rgba(0,0,0,.5));z-index:6}
 #bl.idle{animation:bob 2.4s ease-in-out infinite}
-#kicker{position:absolute;left:33%;top:100%;width:24%;transform:translate(-50%,-100%) rotate(0);
+#kicker{position:absolute;left:40%;top:99%;width:21%;transform:translate(-50%,-100%) rotate(0);
   transform-origin:bottom center;transition:transform .24s ease;filter:drop-shadow(0 10px 9px rgba(0,0,0,.55));z-index:5}
 #kicker.kick{transform:translate(-50%,-100%) rotate(-14deg)}
 .reticle{position:absolute;width:10%;transform:translate(-50%,-50%);opacity:.4;z-index:3;pointer-events:none;
@@ -424,9 +424,9 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
       +'<div class="crowd" id="crowd"></div>'
       +'<div class="net" id="net"></div>'
       +'<div class="fx" id="fx"></div><div class="ring" id="ring"></div>'
-      +'<img class="reticle" id="rL" style="left:28%;top:40%" src="'+ASSETS+'target.png" alt="">'
-      +'<img class="reticle" id="rC" style="left:50%;top:28%" src="'+ASSETS+'target.png" alt="">'
-      +'<img class="reticle" id="rR" style="left:72%;top:40%" src="'+ASSETS+'target.png" alt="">'
+      +'<img class="reticle" id="rL" style="left:30%;top:42%" src="'+ASSETS+'target.png" alt="">'
+      +'<img class="reticle" id="rC" style="left:50%;top:37%" src="'+ASSETS+'target.png" alt="">'
+      +'<img class="reticle" id="rR" style="left:70%;top:42%" src="'+ASSETS+'target.png" alt="">'
       +'<img id="kp" class="idle" src="'+ASSETS+'keeper.png" alt="">'
       +'<img id="kicker" src="'+ASSETS+'kicker.png" alt="">'
       +'<img id="bl" class="idle" src="'+ASSETS+'ball.png" alt="">'
@@ -465,7 +465,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
     if(kp) kp.classList.remove('idle'); if(bl) bl.classList.remove('idle');
     if(kicker){ kicker.classList.add('kick'); setTimeout(function(){kicker.classList.remove('kick');},260); }
     pulseReticle(dir);
-    var T={L:{x:0.28,y:0.40},C:{x:0.50,y:0.28},R:{x:0.72,y:0.40}}, base={x:0.50,y:0.82};
+    var T={L:{x:0.30,y:0.42},C:{x:0.50,y:0.38},R:{x:0.70,y:0.42}}, base={x:0.50,y:0.71};
     var t=T[dir];
     setTimeout(function(){
       bl.style.transform='translate(calc(-50% + '+((t.x-base.x)*W)+'px), calc(-50% + '+((t.y-base.y)*H)+'px)) scale(0.42)';
@@ -473,8 +473,8 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
     // keeper reads with a probability that rises with the streak (linear difficulty)
     var readProb=Math.min(0.10+score*0.05, 0.82), kd;
     if(Math.random()<readProb){ kd=dir; } else { var o=['L','C','R'].filter(function(d){return d!==dir;}); kd=o[Math.floor(Math.random()*o.length)]; }
-    if(kd==='L'){ kp.src=ASSETS+'keeper_left.png'; kp.style.transform='translate(calc(-50% - '+(0.19*W)+'px), -53%)'; }
-    else if(kd==='R'){ kp.src=ASSETS+'keeper_right.png'; kp.style.transform='translate(calc(-50% + '+(0.19*W)+'px), -53%)'; }
+    if(kd==='L'){ kp.src=ASSETS+'keeper_left.png'; kp.style.transform='translate(calc(-50% - '+(0.20*W)+'px), -52%)'; }
+    else if(kd==='R'){ kp.src=ASSETS+'keeper_right.png'; kp.style.transform='translate(calc(-50% + '+(0.20*W)+'px), -52%)'; }
     else { kp.style.transform='translate(-50%, calc(-50% - '+(0.08*H)+'px))'; }
     lastImpact={x:t.x*W, y:t.y*H};
     setTimeout(function(){ resolve(kd===dir); }, 680);
