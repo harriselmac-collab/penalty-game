@@ -373,21 +373,100 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   function powerFor(g){ return Math.round(72+ g/MAXG*26); }
   var app=document.getElementById('app');
 
-  /* ---------- audio ---------- */
-  function tone(freq,dur,type,vol){ if(muted) return;
-    try{ audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
-      var o=audioCtx.createOscillator(),g=audioCtx.createGain();
-      o.type=type||'square'; o.frequency.value=freq; o.connect(g); g.connect(audioCtx.destination);
-      g.gain.setValueAtTime(vol||0.07,audioCtx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+dur);
-      o.start(); o.stop(audioCtx.currentTime+dur);
+  /* ---------- audio: WebAudio chiptune music + layered SFX (zero assets) ----------
+     Everything routes through one master gain; mute sets it to 0 (the sequencer
+     keeps running silently so unmuting resumes the music mid-beat). The context
+     is created on the first user tap — Telegram/iOS autoplay policy. */
+  var master=null, noiseBuf=null, crowdSrc=null;
+  function ensureCtx(){
+    if(!audioCtx){
+      try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return null; }
+      master=audioCtx.createGain(); master.gain.value=muted?0:1; master.connect(audioCtx.destination);
+      var len=audioCtx.sampleRate*1.2, buf=audioCtx.createBuffer(1,len,audioCtx.sampleRate), d=buf.getChannelData(0);
+      for(var i=0;i<len;i++){ d[i]=Math.random()*2-1; }
+      noiseBuf=buf;
+    }
+    if(audioCtx.state==='suspended'){ try{ audioCtx.resume(); }catch(e){} }
+    return audioCtx;
+  }
+  function tone(freq,dur,type,vol,when){ var ctx=ensureCtx(); if(!ctx||muted) return;
+    try{ var t=when||ctx.currentTime, o=ctx.createOscillator(), g=ctx.createGain();
+      o.type=type||'square'; o.frequency.value=freq; o.connect(g); g.connect(master);
+      g.gain.setValueAtTime(vol||0.07,t);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      o.start(t); o.stop(t+dur);
     }catch(e){}
   }
-  function sfx(k){ if(k==='shoot'){tone(280,0.12,'square')} else if(k==='click'){tone(520,0.05,'square',0.05)}
-    else if(k==='save'){tone(150,0.28,'sawtooth',0.09)} else if(k==='coin'){tone(880,0.07,'triangle',0.08);setTimeout(function(){tone(1180,0.09,'triangle',0.07)},70)}
-    else if(k==='goal'){tone(523,0.12);setTimeout(function(){tone(659,0.12)},90);setTimeout(function(){tone(784,0.18)},190)} }
+  function noise(dur,vol,filterType,freq,when){ var ctx=ensureCtx(); if(!ctx||muted) return;
+    try{ var t=when||ctx.currentTime, s=ctx.createBufferSource(), f=ctx.createBiquadFilter(), g=ctx.createGain();
+      s.buffer=noiseBuf; s.loop=true; f.type=filterType||'bandpass'; f.frequency.value=freq||1000;
+      s.connect(f); f.connect(g); g.connect(master);
+      g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+      s.start(t); s.stop(t+dur);
+    }catch(e){}
+  }
+  function cheer(){ var ctx=ensureCtx(); if(!ctx||muted) return;  // crowd roar swell
+    try{ var t=ctx.currentTime, s=ctx.createBufferSource(), f=ctx.createBiquadFilter(), g=ctx.createGain();
+      s.buffer=noiseBuf; s.loop=true; f.type='bandpass'; f.frequency.value=900; f.Q.value=0.6;
+      s.connect(f); f.connect(g); g.connect(master);
+      g.gain.setValueAtTime(0.001,t); g.gain.exponentialRampToValueAtTime(0.12,t+0.18);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+1.4);
+      s.start(t); s.stop(t+1.5);
+    }catch(e){}
+  }
+  function sfx(k){
+    if(k==='shoot'){ tone(240,0.10,'square',0.06); noise(0.09,0.10,'lowpass',300); }        // thump + turf
+    else if(k==='click'){ tone(520,0.05,'square',0.05); }
+    else if(k==='save'){ tone(220,0.30,'sawtooth',0.08); tone(165,0.34,'sawtooth',0.06);   // dissonant "denied"
+      noise(0.5,0.05,'lowpass',500); }
+    else if(k==='coin'){ tone(880,0.07,'triangle',0.08); setTimeout(function(){tone(1180,0.09,'triangle',0.07);},70); }
+    else if(k==='goal'){ var t0=ensureCtx()?audioCtx.currentTime:0;
+      tone(523,0.12,'square',0.07,t0); tone(659,0.12,'square',0.06,t0+0.09);
+      tone(784,0.22,'square',0.07,t0+0.18); tone(1047,0.30,'triangle',0.06,t0+0.27); cheer(); }
+  }
   function buzz(t){ if(tg&&tg.HapticFeedback){ try{ tg.HapticFeedback.impactOccurred(t||'medium'); }catch(e){} } }
-  window.toggleMute=function(e){ if(e){e.stopPropagation();} muted=!muted; var m=document.getElementById('mute'); if(m) m.textContent=muted?'🔇':'🔊'; };
+
+  /* --- chiptune sequencer: A-minor pentatonic; menu = chill, play = driving --- */
+  var PAT={
+    menu:{tempo:96, bass:[45,0,52,0,48,0,52,0,43,0,50,0,48,0,52,0],
+          lead:[69,0,72,0,76,74,0,72,69,0,67,0,64,67,69,0], hat:false},
+    play:{tempo:128, bass:[45,45,57,45,48,48,60,48,43,43,55,43,52,50,48,47],
+          lead:[69,0,72,74,76,0,79,76,74,72,69,0,67,69,72,0], hat:true}
+  };
+  var MUS={mode:null,step:0,next:0,timer:null};
+  function midi(n){ return 440*Math.pow(2,(n-69)/12); }
+  function musicStep(t){
+    var p=PAT[MUS.mode]; if(!p) return;
+    var i=MUS.step%p.bass.length;
+    if(p.bass[i]){ tone(midi(p.bass[i]-12),0.22,'square',0.028,t); }
+    if(p.lead[i]){ tone(midi(p.lead[i]),0.16,'triangle',0.030,t); }
+    if(p.hat){ noise(i%4===0?0.05:0.02, i%4===0?0.020:0.012,'highpass',6000,t); }
+  }
+  function musicTick(){
+    var ctx=audioCtx; if(!ctx||!MUS.mode) return;
+    var stepDur=60/PAT[MUS.mode].tempo/2;  // 8th notes
+    if(MUS.next<ctx.currentTime){ MUS.next=ctx.currentTime+0.05; }
+    while(MUS.next<ctx.currentTime+0.3){ if(!muted){ musicStep(MUS.next); } MUS.step++; MUS.next+=stepDur; }
+  }
+  function setMusic(mode){
+    MUS.mode=mode; MUS.step=0;
+    if(!MUS.timer && ensureCtx()){ MUS.next=0; MUS.timer=setInterval(musicTick,110); }
+    if(crowdSrc){ try{ crowdSrc.stop(); }catch(e){} crowdSrc=null; }
+    if(mode==='play' && audioCtx && !muted){  // low crowd ambience during gameplay
+      try{ var s=audioCtx.createBufferSource(), f=audioCtx.createBiquadFilter(), g=audioCtx.createGain();
+        s.buffer=noiseBuf; s.loop=true; f.type='lowpass'; f.frequency.value=420;
+        s.connect(f); f.connect(g); g.connect(master); g.gain.value=0.014; s.start(); crowdSrc=s;
+      }catch(e){}
+    }
+  }
+  // Autoplay policy: the audio context can only start from a user gesture.
+  document.addEventListener('pointerdown',function boot(){ if(ensureCtx()){ if(!MUS.mode){ setMusic(app.className==='game'?'play':'menu'); } document.removeEventListener('pointerdown',boot); } });
+
+  window.toggleMute=function(e){ if(e){e.stopPropagation();} muted=!muted;
+    if(master){ master.gain.value=muted?0:1; }
+    if(muted && crowdSrc){ try{ crowdSrc.stop(); }catch(err){} crowdSrc=null; }
+    if(!muted && MUS.mode){ setMusic(MUS.mode); }  // rebuild crowd ambience on unmute
+    var m=document.getElementById('mute'); if(m) m.textContent=muted?'🔇':'🔊'; };
 
   /* ---------- pooled particle engine ----------
      ONE rAF loop drives every particle; positions via transform only (no
@@ -458,6 +537,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
 
   function selectScreen(){
     stopLoop(); hideMain(); app.className='sel'; team=null; opp=null; score=0;
+    if(audioCtx){ setMusic('menu'); }
     var html='<div class="hero"><img src="'+A('logo')+'" alt=""><span class="hero-t">'+T_.title+'</span></div>'
       +'<div class="tagline">'+T_.tagline+'</div>'
       +'<div class="seltitle"><span>'+T_.pick+'</span></div>';
@@ -531,6 +611,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   }
   function gameScreen(){
     stopLoop(); hideMain(); busy=false; kicks=0; coins=0; milestone=0; app.className='game';
+    if(audioCtx){ setMusic('play'); }
     app.innerHTML=hudHTML()+sceneHTML()
       +'<div class="dock"><div class="dock-hint">'+T_.aimHint+'</div>'
       +'<div class="aim">'
