@@ -333,6 +333,15 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   var tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
   if(tg){ try{ tg.ready(); tg.expand(); if(tg.setHeaderColor) tg.setHeaderColor('#08101f'); if(tg.setBackgroundColor) tg.setBackgroundColor('#08101f'); }catch(e){} }
   var ASSETS='assets/';
+  // ---- i18n: same file serves the Arabic bot (default) and the English bot (?lang=en) ----
+  var LANG=((new URLSearchParams(location.search).get('lang')||'ar').toLowerCase()==='en')?'en':'ar';
+  document.documentElement.lang=LANG; document.documentElement.dir=(LANG==='en')?'ltr':'rtl';
+  var T_={
+    ar:{title:'ركلات الترجيح',tagline:'🧤 سجّل أطول سلسلة أهداف متتالية! تبدأ سهلة ويزداد الحارس ذكاءً مع كل هدف. تخطَّ <b style="color:#ffe9a6">١٠</b> أهداف واربح رصيد توقّع مجاني.',pick:'🏆 اختر مباراتك',play:'▶ إلعب',diff:'الصعوبة',chip:'رصيد مجاني',opp:'الخصم',streak:'السلسلة',aimHint:'⚽ اختر زاوية التسديد',left:'يسار',mid:'وسط',right:'يمين',saved:'تصدّى! 🧤',goal:'هدف! ⚽',combo:{3:'كومبو ×٣ ⚡',5:'ملتهب! 🔥',7:'لا يُوقَف! 💥',10:'أسطوري! 👑'},creditCombo:'🎁 رصيد مجاني!',tEpic:'بطولة مذهلة! 🏆',tGood:'أداء رائع! 👏',tOver:'انتهت الجولة',won:'ربحت رصيد توقّع مجاني! 🎁',need:'سجّل أكثر من ١٠ لتربح رصيداً',xp:'الخبرة',stBest:'أفضل سلسلة',stKicks:'التسديدات',stAcc:'الدقة',stPts:'النقاط',again:'🔁 إلعب مجدداً',change:'🔀 غيّر',subHint:'اضغط «استلم رصيدك» بالأسفل لإرسال نتيجتك 🎁',send:'أرسل النتيجة 🎁',mainBtn:'استلم رصيدك 🎁'},
+    en:{title:'Penalty Shootout',tagline:'🧤 Score the longest goal streak you can! It starts easy and the keeper gets smarter with every goal. Beat <b style="color:#ffe9a6">10</b> goals to win a free prediction credit.',pick:'🏆 Pick your match',play:'▶ Play',diff:'Difficulty',chip:'Free credit',opp:'Opponent',streak:'Streak',aimHint:'⚽ Pick your corner',left:'Left',mid:'Center',right:'Right',saved:'Saved! 🧤',goal:'Goal! ⚽',combo:{3:'Combo ×3 ⚡',5:'On fire! 🔥',7:'Unstoppable! 💥',10:'Legendary! 👑'},creditCombo:'🎁 Free credit!',tEpic:'Incredible run! 🏆',tGood:'Great performance! 👏',tOver:'Round over',won:'You won a free prediction credit! 🎁',need:'Score more than 10 to win a credit',xp:'XP',stBest:'Best streak',stKicks:'Shots',stAcc:'Accuracy',stPts:'Points',again:'🔁 Play again',change:'🔀 Switch',subHint:'Tap “Claim reward” below to submit your score 🎁',send:'Submit score 🎁',mainBtn:'Claim reward 🎁'}
+  }[LANG];
+  document.title=T_.title;
+  function tn(t){ return (LANG==='en'&&t.e)?t.e:t.n; }
   var REWARD_AT=11; // must score MORE than 10 (server threshold) to earn a credit
 
   // Preload every sprite before gameplay (WebP: ~1/3 the PNG weight) — no
@@ -346,12 +355,12 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
 
   // --- rivalries: [teamA, teamB]; g = global-fans number (cosmetic) ---
   var matches = [
-    [{f:'🇳🇱',n:'هولندا',c:'#ea6d1a',g:8041177},{f:'🇦🇷',n:'الأرجنتين',c:'#6ca7dc',g:5598318}],
-    [{f:'🇧🇷',n:'البرازيل',c:'#1f9e4a',g:7233901},{f:'🇩🇪',n:'ألمانيا',c:'#3a3f47',g:6120447}],
-    [{f:'🇫🇷',n:'فرنسا',c:'#23449e',g:5904122},{f:'🇪🇸',n:'إسبانيا',c:'#cc1b2c',g:4877650}],
-    [{f:'🇵🇹',n:'البرتغال',c:'#b02323',g:4512330},{f:'🇲🇦',n:'المغرب',c:'#11774a',g:3998210}],
-    [{f:'🇸🇳',n:'السنغال',c:'#13863c',g:3598518},{f:'🇶🇦',n:'قطر',c:'#7a1b3a',g:2854393}],
-    [{f:'🇸🇦',n:'السعودية',c:'#1b7a44',g:3104560},{f:'🇪🇬',n:'مصر',c:'#cc2233',g:2640880}]
+    [{f:'🇳🇱',n:'هولندا',e:'Netherlands',c:'#ea6d1a',g:8041177},{f:'🇦🇷',n:'الأرجنتين',e:'Argentina',c:'#6ca7dc',g:5598318}],
+    [{f:'🇧🇷',n:'البرازيل',e:'Brazil',c:'#1f9e4a',g:7233901},{f:'🇩🇪',n:'ألمانيا',e:'Germany',c:'#3a3f47',g:6120447}],
+    [{f:'🇫🇷',n:'فرنسا',e:'France',c:'#23449e',g:5904122},{f:'🇪🇸',n:'إسبانيا',e:'Spain',c:'#cc1b2c',g:4877650}],
+    [{f:'🇵🇹',n:'البرتغال',e:'Portugal',c:'#b02323',g:4512330},{f:'🇲🇦',n:'المغرب',e:'Morocco',c:'#11774a',g:3998210}],
+    [{f:'🇸🇳',n:'السنغال',e:'Senegal',c:'#13863c',g:3598518},{f:'🇶🇦',n:'قطر',e:'Qatar',c:'#7a1b3a',g:2854393}],
+    [{f:'🇸🇦',n:'السعودية',e:'Saudi Arabia',c:'#1b7a44',g:3104560},{f:'🇪🇬',n:'مصر',e:'Egypt',c:'#cc2233',g:2640880}]
   ];
   var MAXG=8041177;
   // ---- CORE STATE (unchanged mechanics) ----
@@ -449,21 +458,21 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
 
   function selectScreen(){
     stopLoop(); hideMain(); app.className='sel'; team=null; opp=null; score=0;
-    var html='<div class="hero"><img src="'+A('logo')+'" alt=""><span class="hero-t">ركلات الترجيح</span></div>'
-      +'<div class="tagline">🧤 سجّل أطول سلسلة أهداف متتالية! تبدأ سهلة ويزداد الحارس ذكاءً مع كل هدف. تخطَّ <b style="color:#ffe9a6">١٠</b> أهداف واربح رصيد توقّع مجاني.</div>'
-      +'<div class="seltitle"><span>🏆 اختر مباراتك</span></div>';
+    var html='<div class="hero"><img src="'+A('logo')+'" alt=""><span class="hero-t">'+T_.title+'</span></div>'
+      +'<div class="tagline">'+T_.tagline+'</div>'
+      +'<div class="seltitle"><span>'+T_.pick+'</span></div>';
     matches.forEach(function(m,mi){
       var a=m[0], b=m[1], diff=Math.max(1,Math.min(5,mi+1));
       html+='<div class="match" data-mi="'+mi+'" style="animation-delay:'+(0.05+mi*0.06).toFixed(2)+'s;background:linear-gradient(100deg,'+b.c+' 0 44%,'+a.c+' 56% 100%)">'
-        +'<span class="play-hint">▶ إلعب</span><span class="shine" style="animation-delay:'+(mi*0.9).toFixed(1)+'s"></span>'
+        +'<span class="play-hint">'+T_.play+'</span><span class="shine" style="animation-delay:'+(mi*0.9).toFixed(1)+'s"></span>'
         +'<div class="match-top">'
-          +'<button class="mteam" data-mi="'+mi+'" data-si="0"><span class="mflag">'+a.f+'</span><span class="mname">'+a.n+'</span><span class="mrate">'+starStr(starsFor(a.g))+'</span><span class="mfollow">👥 '+fmt(a.g)+'</span></button>'
+          +'<button class="mteam" data-mi="'+mi+'" data-si="0"><span class="mflag">'+a.f+'</span><span class="mname">'+tn(a)+'</span><span class="mrate">'+starStr(starsFor(a.g))+'</span><span class="mfollow">👥 '+fmt(a.g)+'</span></button>'
           +'<span class="mvs">VS</span>'
-          +'<button class="mteam" data-mi="'+mi+'" data-si="1"><span class="mflag">'+b.f+'</span><span class="mname">'+b.n+'</span><span class="mrate">'+starStr(starsFor(b.g))+'</span><span class="mfollow">👥 '+fmt(b.g)+'</span></button>'
+          +'<button class="mteam" data-mi="'+mi+'" data-si="1"><span class="mflag">'+b.f+'</span><span class="mname">'+tn(b)+'</span><span class="mrate">'+starStr(starsFor(b.g))+'</span><span class="mfollow">👥 '+fmt(b.g)+'</span></button>'
         +'</div>'
         +'<div class="match-foot">'
-          +'<span class="diff">الصعوبة <span class="diff-pips">'+ratePips((a.g+b.g)/2)+'</span></span>'
-          +'<span class="reward-chip"><img src="'+A('credit')+'" alt="">رصيد مجاني</span>'
+          +'<span class="diff">'+T_.diff+' <span class="diff-pips">'+ratePips((a.g+b.g)/2)+'</span></span>'
+          +'<span class="reward-chip"><img src="'+A('credit')+'" alt="">'+T_.chip+'</span>'
         +'</div>'
       +'</div>';
     });
@@ -479,8 +488,8 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
     var pct=Math.min(100,score/REWARD_AT*100);
     return '<div class="hud"><div class="hudbar">'
       +'<div class="hud-row">'
-        +'<div class="opp"><span class="cf">'+opp.f+'</span><span style="min-width:0"><span class="cl">الخصم</span><span class="cv">'+opp.n+'</span></span></div>'
-        +'<div class="streak" id="streak"><span class="lab">السلسلة</span><span class="val" id="sc">'+score+'</span><span class="flame">🔥</span></div>'
+        +'<div class="opp"><span class="cf">'+opp.f+'</span><span style="min-width:0"><span class="cl">'+T_.opp+'</span><span class="cv">'+tn(opp)+'</span></span></div>'
+        +'<div class="streak" id="streak"><span class="lab">'+T_.streak+'</span><span class="val" id="sc">'+score+'</span><span class="flame">🔥</span></div>'
         +'<div class="hud-right">'
           +'<div class="mini"><span class="best-chip">🏅 <span id="bs">'+best+'</span></span>'
           +'<button class="mute" id="mute" onclick="toggleMute(event)">'+(muted?'🔇':'🔊')+'</button></div>'
@@ -523,11 +532,11 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   function gameScreen(){
     stopLoop(); hideMain(); busy=false; kicks=0; coins=0; milestone=0; app.className='game';
     app.innerHTML=hudHTML()+sceneHTML()
-      +'<div class="dock"><div class="dock-hint">⚽ اختر زاوية التسديد</div>'
+      +'<div class="dock"><div class="dock-hint">'+T_.aimHint+'</div>'
       +'<div class="aim">'
-      +'<button class="b-side" data-d="L" style="--d:0"><span class="ar">◄</span><span class="lbl">يسار</span></button>'
-      +'<button class="b-mid" data-d="C" style="--d:1"><span class="ar">▲</span><span class="lbl">وسط</span></button>'
-      +'<button class="b-side" data-d="R" style="--d:2"><span class="ar">►</span><span class="lbl">يمين</span></button>'
+      +'<button class="b-side" data-d="L" style="--d:0"><span class="ar">◄</span><span class="lbl">'+T_.left+'</span></button>'
+      +'<button class="b-mid" data-d="C" style="--d:1"><span class="ar">▲</span><span class="lbl">'+T_.mid+'</span></button>'
+      +'<button class="b-side" data-d="R" style="--d:2"><span class="ar">►</span><span class="lbl">'+T_.right+'</span></button>'
       +'</div></div>';
     Array.prototype.forEach.call(app.querySelectorAll('.aim button'),function(b){
       b.onclick=function(){ shoot(b.getAttribute('data-d')); };
@@ -576,7 +585,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   function resolve(saved){
     var scene=document.getElementById('scene');
     if(saved){
-      showBanner('تصدّى! 🧤'); sfx('save'); buzz('heavy');
+      showBanner(T_.saved); sfx('save'); buzz('heavy');
       var lv=document.getElementById('lives'); if(lv){ var h=lv.querySelector('.life'); if(h) h.classList.add('gone'); }
       var crowd=document.getElementById('crowd'); if(crowd){ crowd.style.opacity='.25'; }
       var fx=document.getElementById('fx');           // red save flash + dust where the keeper lands
@@ -588,7 +597,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
       setTimeout(over,1050);
     } else {
       score++; if(score>best){ best=score; }
-      showBanner('هدف! ⚽'); sfx('goal'); buzz('medium'); goalImpact();
+      showBanner(T_.goal); sfx('goal'); buzz('medium'); goalImpact();
       var sc=document.getElementById('sc'); if(sc){ sc.textContent=score; sc.classList.remove('bump'); void sc.offsetWidth; sc.classList.add('bump'); }
       var bs=document.getElementById('bs'); if(bs) bs.textContent=best;
       var st=document.getElementById('streak'); if(st){ if(score>=3) st.classList.add('hot'); }
@@ -598,12 +607,12 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
       if(fl&&lastImpact){ fl.textContent='+10 ⭐'; fl.style.left=lastImpact.x+'px'; fl.style.top=lastImpact.y+'px';
         fl.classList.remove('go'); void fl.offsetWidth; fl.classList.add('go'); }
       if(score>=5){ confetti(); }
-      if(score===REWARD_AT){ coinBurst(); showCombo('🎁 رصيد مجاني!'); }
+      if(score===REWARD_AT){ coinBurst(); showCombo(T_.creditCombo); }
       setTimeout(nextKick,940);
     }
   }
   function comboCheck(){
-    var labels={3:'كومبو ×٣ ⚡',5:'ملتهب! 🔥',7:'لا يُوقَف! 💥',10:'أسطوري! 👑'};
+    var labels=T_.combo;
     if(labels[score]){ showCombo(labels[score]); buzz('light'); }
   }
   function goalImpact(){
@@ -639,30 +648,30 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
     var starN = best>=REWARD_AT?5 : best>=8?4 : best>=5?3 : best>=3?2 : best>=1?1:0;
     var acc = kicks>0 ? Math.round(best/ kicks*100) : 0;
     if(win){ setTimeout(confetti,120); }
-    var title = win?'بطولة مذهلة! 🏆' : best>=5?'أداء رائع! 👏' : 'انتهت الجولة';
+    var title = win?T_.tEpic : best>=5?T_.tGood : T_.tOver;
     var starsHTML='';
     for(var i=0;i<5;i++){ starsHTML+='<span class="st'+(i<starN?' lit':'')+'" data-i="'+i+'">★</span>'; }
     var html='<div class="over" id="over">'
       +'<div class="over-title">'+title+'</div>'
-      +'<div class="over-sub">'+team.f+' '+team.n+' <span style="opacity:.6">🆚</span> '+opp.f+' '+opp.n+'</div>'
+      +'<div class="over-sub">'+team.f+' '+tn(team)+' <span style="opacity:.6">🆚</span> '+opp.f+' '+tn(opp)+'</div>'
       +'<div class="stars" id="stars">'+starsHTML+'</div>'
       +'<div class="scoreboard"><img src="'+A('panel')+'" alt=""><span class="sv" id="finalScore">0</span></div>'
       +'<div class="reward-line'+(win?' win':'')+'"><img src="'+A('credit')+'" alt="">'
-        +(win?'ربحت رصيد توقّع مجاني! 🎁':'سجّل أكثر من ١٠ لتربح رصيداً')+'</div>'
+        +(win?T_.won:T_.need)+'</div>'
       +'<div class="xpbar"><div class="xf" id="xf"></div></div>'
-      +'<div class="xplab">الخبرة <span id="xpv">0</span> XP</div>'
+      +'<div class="xplab">'+T_.xp+' <span id="xpv">0</span> XP</div>'
       +'<div class="stats">'
-        +'<div class="stat"><span class="k">أفضل سلسلة</span><span class="v" id="stBest">0</span></div>'
-        +'<div class="stat"><span class="k">التسديدات</span><span class="v">'+kicks+'</span></div>'
-        +'<div class="stat"><span class="k">الدقة</span><span class="v">'+acc+'%</span></div>'
-        +'<div class="stat"><span class="k">النقاط</span><span class="v" id="stCoins">0</span></div>'
+        +'<div class="stat"><span class="k">'+T_.stBest+'</span><span class="v" id="stBest">0</span></div>'
+        +'<div class="stat"><span class="k">'+T_.stKicks+'</span><span class="v">'+kicks+'</span></div>'
+        +'<div class="stat"><span class="k">'+T_.stAcc+'</span><span class="v">'+acc+'%</span></div>'
+        +'<div class="stat"><span class="k">'+T_.stPts+'</span><span class="v" id="stCoins">0</span></div>'
       +'</div>'
       +'<div class="row">'
-        +'<button class="btn gold" id="again">🔁 إلعب مجدداً</button>'
-        +'<button class="btn ghost" id="chg">🔀 غيّر</button>'
+        +'<button class="btn gold" id="again">'+T_.again+'</button>'
+        +'<button class="btn ghost" id="chg">'+T_.change+'</button>'
       +'</div>'
-      + (tg?'<div class="subhint">اضغط «استلم رصيدك» بالأسفل لإرسال نتيجتك 🎁</div>'
-           :'<button class="btn" id="sub" style="flex:none;margin-top:6px">أرسل النتيجة 🎁</button>')
+      + (tg?'<div class="subhint">'+T_.subHint+'</div>'
+           :'<button class="btn" id="sub" style="flex:none;margin-top:6px">'+T_.send+'</button>')
       +'</div>';
     // Overlay the whole app (not just the scene) so HUD + controls are covered.
     // Appended to #app so gameScreen()/selectScreen()'s innerHTML reset clears it.
@@ -685,8 +694,8 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   }
 
   /* ---------- submit (Telegram contract — UNCHANGED) ---------- */
-  function submit(){ if(tg){ try{ tg.sendData(JSON.stringify({score:best,team:team?team.n:''})); tg.close(); }catch(e){} } }
-  function showMain(){ if(tg&&tg.MainButton){ tg.MainButton.setText('استلم رصيدك 🎁'); tg.MainButton.onClick(submit); tg.MainButton.show(); } }
+  function submit(){ if(tg){ try{ tg.sendData(JSON.stringify({score:best,team:team?tn(team):''})); tg.close(); }catch(e){} } }
+  function showMain(){ if(tg&&tg.MainButton){ tg.MainButton.setText(T_.mainBtn); tg.MainButton.onClick(submit); tg.MainButton.show(); } }
   function hideMain(){ if(tg&&tg.MainButton){ tg.MainButton.hide(); tg.MainButton.offClick(submit); } }
 
   selectScreen();
