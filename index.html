@@ -191,8 +191,18 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   text-shadow:0 2px 4px rgba(0,0,0,.7);pointer-events:none;opacity:0;transform:translate(-50%,-50%);will-change:transform,opacity}
 .floaty.go{animation:floatUp 1s var(--e-out)}
 #kicker{position:absolute;left:40%;top:99%;width:21%;transform:translate(-50%,-100%) rotate(0);
-  transform-origin:bottom center;transition:transform .24s ease;filter:drop-shadow(0 10px 9px rgba(0,0,0,.55));z-index:5}
-#kicker.kick{transform:translate(-50%,-100%) rotate(-14deg)}
+  transform-origin:bottom center;filter:drop-shadow(0 10px 9px rgba(0,0,0,.55));z-index:5;will-change:transform}
+/* run-up: dash toward the ball, kick swing, settle back. Percentages are of the
+   kicker's own box (21% of scene wide), so ~43%/-42% ≈ a 9%-of-scene dash. */
+#kicker.kick{animation:kickrun .46s cubic-bezier(.45,.05,.55,.95)}
+@keyframes kickrun{
+  0%{transform:translate(-50%,-100%) rotate(0)}
+  12%{transform:translate(-37%,-113%) rotate(4deg)}
+  24%{transform:translate(-7%,-142%) rotate(6deg)}
+  32%{transform:translate(-7%,-142%) rotate(-18deg)}
+  55%{transform:translate(-7%,-142%) rotate(-10deg)}
+  100%{transform:translate(-50%,-100%) rotate(0)}
+}
 .reticle{position:absolute;width:10%;transform:translate(-50%,-50%);opacity:.4;z-index:3;pointer-events:none;
   filter:drop-shadow(0 2px 2px rgba(0,0,0,.45))}
 .reticle.hot{opacity:1;animation:retPulse .5s ease}
@@ -631,7 +641,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
     var W=scene.clientWidth, H=scene.clientHeight;
     kicks++;
     if(kp) kp.classList.remove('idle'); if(bl) bl.classList.remove('idle');
-    if(kicker){ kicker.classList.add('kick'); setTimeout(function(){kicker.classList.remove('kick');},260); }
+    if(kicker){ kicker.classList.add('kick'); setTimeout(function(){kicker.classList.remove('kick');},470); }
     pulseReticle(dir);
     scene.classList.remove('zoomk'); void scene.offsetWidth; scene.classList.add('zoomk');
     var T={L:{x:0.30,y:0.45},C:{x:0.50,y:0.40},R:{x:0.70,y:0.45}}, base={x:0.50,y:0.68};
