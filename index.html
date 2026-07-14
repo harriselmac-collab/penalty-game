@@ -219,7 +219,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   pointer-events:none;text-align:center}
 .banner img{width:100%;display:block;filter:drop-shadow(0 5px 8px rgba(0,0,0,.55))}
 .banner span{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);font-family:var(--fdisp);
-  color:#fff;font-weight:800;font-size:24px;text-shadow:0 2px 4px rgba(0,0,0,.6);white-space:nowrap}
+  color:#10264a;font-weight:800;font-size:24px;text-shadow:0 1px 0 rgba(255,255,255,.65);white-space:nowrap}
 .banner.show{animation:bannerPop 1.05s ease}
 .combo{position:absolute;top:34%;left:50%;transform:translate(-50%,-50%) scale(.4);z-index:10;opacity:0;
   font-family:var(--fdisp);font-weight:800;font-size:26px;color:#fff;white-space:nowrap;pointer-events:none;
@@ -345,15 +345,24 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
     ar:{title:'ركلات الترجيح',tagline:'🧤 سجّل أطول سلسلة أهداف متتالية! تبدأ سهلة ويزداد الحارس ذكاءً مع كل هدف. تخطَّ <b style="color:#ffe9a6">١٠</b> أهداف واربح رصيد توقّع مجاني.',pick:'🏆 اختر مباراتك',play:'▶ إلعب',diff:'الصعوبة',chip:'رصيد مجاني',opp:'الخصم',streak:'السلسلة',aimHint:'⚽ اختر زاوية التسديد',left:'يسار',mid:'وسط',right:'يمين',saved:'تصدّى! 🧤',goal:'هدف! ⚽',combo:{3:'كومبو ×٣ ⚡',5:'ملتهب! 🔥',7:'لا يُوقَف! 💥',10:'أسطوري! 👑'},creditCombo:'🎁 رصيد مجاني!',tEpic:'بطولة مذهلة! 🏆',tGood:'أداء رائع! 👏',tOver:'انتهت الجولة',won:'ربحت رصيد توقّع مجاني! 🎁',need:'سجّل أكثر من ١٠ لتربح رصيداً',xp:'الخبرة',stBest:'أفضل سلسلة',stKicks:'التسديدات',stAcc:'الدقة',stPts:'النقاط',again:'🔁 إلعب مجدداً',change:'🔀 غيّر',subHint:'اضغط «استلم رصيدك» بالأسفل لإرسال نتيجتك 🎁',send:'أرسل النتيجة 🎁',mainBtn:'استلم رصيدك 🎁'},
     en:{title:'Penalty Shootout',tagline:'🧤 Score the longest goal streak you can! It starts easy and the keeper gets smarter with every goal. Beat <b style="color:#ffe9a6">10</b> goals to win a free prediction credit.',pick:'🏆 Pick your match',play:'▶ Play',diff:'Difficulty',chip:'Free credit',opp:'Opponent',streak:'Streak',aimHint:'⚽ Pick your corner',left:'Left',mid:'Center',right:'Right',saved:'Saved! 🧤',goal:'Goal! ⚽',combo:{3:'Combo ×3 ⚡',5:'On fire! 🔥',7:'Unstoppable! 💥',10:'Legendary! 👑'},creditCombo:'🎁 Free credit!',tEpic:'Incredible run! 🏆',tGood:'Great performance! 👏',tOver:'Round over',won:'You won a free prediction credit! 🎁',need:'Score more than 10 to win a credit',xp:'XP',stBest:'Best streak',stKicks:'Shots',stAcc:'Accuracy',stPts:'Points',again:'🔁 Play again',change:'🔀 Switch',subHint:'Tap “Claim reward” below to submit your score 🎁',send:'Submit score 🎁',mainBtn:'Claim reward 🎁'}
   }[LANG];
+  T_.tagline=LANG==='en'
+    ?'🧤 Score 8 goals before your 2 saves run out to win a free prediction credit.'
+    :'🧤 سجّل ٨ أهداف قبل نفاد فرصتيك واربح رصيد توقّع مجاني.';
+  T_.won=LANG==='en'?'🎁 Free prediction unlocked!':'🎁 فتحت توقعاً مجانياً!';
+  T_.need=LANG==='en'?'Score 8 goals to win a free credit':'سجّل ٨ أهداف لتربح رصيداً';
+  T_.subHint=LANG==='en'?'🎁 Tap Claim free prediction below to unlock your reward':'🎁 اضغط استلم التوقع المجاني بالأسفل وافتح رصيدك';
+  T_.send=LANG==='en'?'Claim free prediction 🎁':'استلم التوقع المجاني 🎁';
+  T_.mainBtn=T_.send;
   document.title=T_.title;
   function tn(t){ return (LANG==='en'&&t.e)?t.e:t.n; }
-  var REWARD_AT=11; // must score MORE than 10 (server threshold) to earn a credit
+  var REWARD_AT=8; // score 8+ earns credit; bot threshold default is 7
+  var LIVES=2;
 
   // Preload every sprite before gameplay (WebP: ~1/3 the PNG weight) — no
   // mid-shot fetches (the dive sprites used to load lazily on the first save).
-  var IMGS={stadium:'stadium.webp',keeper:'keeper.webp',keeper_left:'keeper_left.webp',
-    keeper_right:'keeper_right.webp',ball:'ball.webp',kicker:'kicker.webp',logo:'logo.webp',
-    banner:'banner.webp',panel:'panel.webp',credit:'credit.webp',target:'target.webp'};
+  var IMGS={stadium:'stadium-v2.webp',keeper:'keeper.webp',keeper_left:'keeper_left.webp',
+    keeper_right:'keeper_right.webp',ball:'ball-v2.webp',kicker:'kicker.webp',logo:'logo.webp',
+    banner:'banner-v2.webp',panel:'panel-v2.webp',credit:'credit.webp',target:'target-v2.webp'};
   var _pre={};
   for(var k in IMGS){ _pre[k]=new Image(); _pre[k].src=ASSETS+IMGS[k]; }
   function A(k){ return ASSETS+IMGS[k]; }
@@ -369,7 +378,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   ];
   var MAXG=8041177;
   // ---- CORE STATE (unchanged mechanics) ----
-  var team=null, opp=null, score=0, best=0, busy=false, muted=false, audioCtx=null, lastImpact=null;
+  var team=null, opp=null, score=0, best=0, misses=0, busy=false, muted=false, audioCtx=null, lastImpact=null;
   // ---- display-only stats (do not affect logic) ----
   var kicks=0, coins=0, milestone=0, raf=0, particles=[];
 
@@ -578,7 +587,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
         +'<div class="hud-right">'
           +'<div class="mini"><span class="best-chip">🏅 <span id="bs">'+best+'</span></span>'
           +'<button class="mute" id="mute" onclick="toggleMute(event)">'+(muted?'🔇':'🔊')+'</button></div>'
-          +'<div class="lives" id="lives"><span class="life">❤️</span></div>'
+          +'<div class="lives" id="lives">'+Array(LIVES+1).join('<span class="life">&#10084;&#65039;</span>')+'</div>'
         +'</div>'
       +'</div>'
       +'<div class="prog"><div class="prog-fill" id="prog" style="width:'+pct+'%"></div>'
@@ -613,7 +622,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
       +'</div></div>';
   }
   function gameScreen(){
-    stopLoop(); hideMain(); busy=false; kicks=0; coins=0; milestone=0; app.className='game';
+    stopLoop(); hideMain(); busy=false; misses=0; kicks=0; coins=0; milestone=0; app.className='game';
     if(audioCtx){ setMusic('play'); }
     app.innerHTML=hudHTML()+sceneHTML()
       +'<div class="dock"><div class="dock-hint">'+T_.aimHint+'</div>'
@@ -669,8 +678,9 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   function resolve(saved){
     var scene=document.getElementById('scene');
     if(saved){
+      misses++;
       showBanner(T_.saved); sfx('save'); buzz('heavy');
-      var lv=document.getElementById('lives'); if(lv){ var h=lv.querySelector('.life'); if(h) h.classList.add('gone'); }
+      var lv=document.getElementById('lives'); if(lv){ var h=lv.querySelector('.life:not(.gone)'); if(h) h.classList.add('gone'); }
       var crowd=document.getElementById('crowd'); if(crowd){ crowd.style.opacity='.25'; }
       var fx=document.getElementById('fx');           // red save flash + dust where the keeper lands
       if(fx){ fx.style.background='radial-gradient(circle at 50% 45%, rgba(255,70,80,.5), rgba(255,70,80,0) 55%)';
@@ -678,7 +688,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
       if(scene){ dustBurst(scene.clientWidth*0.5, scene.clientHeight*0.56);
         scene.classList.add('shake'); setTimeout(function(){scene.classList.remove('shake');},420); }
       if(score>best){ best=score; }
-      setTimeout(over,1050);
+      setTimeout(misses>=LIVES?over:nextKick,1050);
     } else {
       score++; if(score>best){ best=score; }
       showBanner(T_.goal); sfx('goal'); buzz('medium'); goalImpact();
@@ -714,10 +724,11 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
       scene.classList.remove('shake-sm'); setTimeout(function(){ scene.classList.add('shake-sm'); },20); setTimeout(function(){scene.classList.remove('shake-sm');},320); }
   }
   function nextKick(){
-    var kp=document.getElementById('kp'), bl=document.getElementById('bl'), trail=document.getElementById('blTrail');
+    var kp=document.getElementById('kp'), bl=document.getElementById('bl'), trail=document.getElementById('blTrail'), crowd=document.getElementById('crowd');
     if(kp){ kp.src=A('keeper'); kp.style.transform='translate(-50%,-50%)'; kp.classList.add('idle'); }
     if(bl){ bl.classList.remove('fly'); bl.style.transition='none'; bl.style.transform='translate(-50%,-50%)'; void bl.offsetWidth; bl.style.transition=''; }  /* ball rests still on the spot — no idle bounce */
     if(trail){ trail.style.transition='none'; trail.style.opacity='0'; trail.style.transform='translate(-50%,-50%)'; void trail.offsetWidth; trail.style.transition=''; }
+    if(crowd){ crowd.style.opacity='.4'; }
     busy=false;
   }
 
@@ -778,7 +789,7 @@ html,body{margin:0;padding:0;height:100%;color:var(--text);font-family:var(--fbo
   }
 
   /* ---------- submit (Telegram contract — UNCHANGED) ---------- */
-  function submit(){ if(tg){ try{ tg.sendData(JSON.stringify({score:best,team:team?tn(team):''})); tg.close(); }catch(e){} } }
+  function submit(){ if(tg){ try{ tg.sendData(JSON.stringify({score:best,team:team?tn(team):'',t:new URLSearchParams(location.search).get('t')||''})); tg.close(); }catch(e){} } }
   function showMain(){ if(tg&&tg.MainButton){ tg.MainButton.setText(T_.mainBtn); tg.MainButton.onClick(submit); tg.MainButton.show(); } }
   function hideMain(){ if(tg&&tg.MainButton){ tg.MainButton.hide(); tg.MainButton.offClick(submit); } }
 
