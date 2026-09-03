@@ -125,6 +125,40 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
 .sponsor-btn.onex-btn{border:3px solid #45d8ff;background:linear-gradient(180deg,#1976d2,#0d47a1);color:#ffffff;box-shadow:0 6px 0 #08295b}
 .sponsor-btn.melbet-btn{border:3px solid #ffe082;background:linear-gradient(180deg,#f5a623,#d47a08);color:#1a0f00;box-shadow:0 6px 0 #8f4c02}
 
+.challenge-btn{min-height:108px;border:4px solid #81c784;border-radius:8px;background:linear-gradient(180deg,#2e7d32,#1b5e20);color:#ffffff;font-family:var(--display);font-size:34px;font-weight:800;box-shadow:0 8px 0 #0d3811,0 0 24px rgba(76,175,80,.4);cursor:pointer;transition:transform .15s}
+.challenge-btn:active{transform:translateY(4px)}
+.personal-record-bar{display:flex;align-items:center;justify-content:center;gap:12px;margin:10px 0 14px;padding:10px 20px;border-radius:24px;background:rgba(255,211,79,.12);border:2px solid rgba(255,211,79,.4);color:#ffd34f;font-size:24px;font-weight:800}
+.personal-record-bar strong{font-size:32px;color:#fff}
+.record-new-tag{background:#e53935;color:#fff;padding:2px 10px;border-radius:6px;font-size:18px;font-weight:800;animation:pulse .8s infinite}
+@keyframes screenShake{0%,100%{transform:translate(0,0)}20%{transform:translate(-14px,10px)}40%{transform:translate(14px,-10px)}60%{transform:translate(-10px,8px)}80%{transform:translate(10px,-6px)}}
+.screen-shake{animation:screenShake .22s ease-in-out !important}
+.combo-banner{position:absolute;z-index:25;top:1050px;left:50%;transform:translateX(-50%) scale(.9);padding:10px 32px;border-radius:30px;background:linear-gradient(90deg,#ff6f00,#ff8f00);border:3px solid #ffe082;color:#ffffff;font-family:var(--display);font-size:32px;font-weight:800;box-shadow:0 4px 20px rgba(255,111,0,.6);pointer-events:none;animation:comboPop .4s cubic-bezier(.175,.885,.32,1.275) forwards}
+@keyframes comboPop{0%{opacity:0;transform:translateX(-50%) scale(.6) translateY(20px)}100%{opacity:1;transform:translateX(-50%) scale(1) translateY(0)}}
+.streak-pill{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;margin:14px auto 4px;border-radius:20px;background:rgba(255,111,0,.18);border:2px solid rgba(255,111,0,.5);color:#ffb74d;font-size:24px;font-weight:800}
+.leaderboard-overlay{z-index:95;padding:40px 24px}
+.leaderboard-panel{width:920px;max-height:1650px;padding:42px 36px;overflow-y:auto}
+.lb-incentive{margin:8px 0 20px;color:#ffd34f;font-size:26px;font-weight:800;line-height:1.35;text-align:center}
+.lb-my-card{display:flex;align-items:center;justify-content:space-between;padding:20px 28px;margin-bottom:22px;border-radius:8px;background:rgba(14,38,62,.88);border:3px solid #29b6f6;box-shadow:inset 0 0 16px rgba(41,182,246,.2)}
+.lb-my-rank{display:flex;flex-direction:column;align-items:flex-start}
+.lb-my-rank span{color:#aed9f8;font-size:22px}
+.lb-my-rank strong{color:#fff;font-family:var(--display);font-size:42px}
+.lb-my-stats{display:flex;gap:32px}
+.lb-my-stats div{text-align:center}
+.lb-my-stats span{display:block;color:#aed9f8;font-size:22px}
+.lb-my-stats strong{color:#ffd34f;font-family:var(--display);font-size:38px}
+.lb-list{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+.lb-row{display:grid;grid-template-columns:80px 1fr 140px;align-items:center;padding:16px 20px;border-radius:8px;background:rgba(10,24,40,.85);border:2px solid #284762}
+.lb-row.top-1{border-color:#ffd34f;background:rgba(255,211,79,.12)}
+.lb-row.top-2{border-color:#b0bec5;background:rgba(176,190,197,.1)}
+.lb-row.top-3{border-color:#cd7f32;background:rgba(205,127,50,.1)}
+.lb-row.is-me{border-color:#29b6f6;background:rgba(41,182,246,.18);box-shadow:0 0 14px rgba(41,182,246,.35)}
+.lb-pos{font-family:var(--display);font-size:32px;font-weight:800;color:#aed9f8}
+.lb-row.top-1 .lb-pos{color:#ffd34f}
+.lb-player{display:flex;align-items:center;gap:14px;font-size:26px;font-weight:700;color:#fff}
+.lb-flag{font-size:34px}
+.lb-score{text-align:end;font-family:var(--display);font-size:34px;font-weight:800;color:#ffd34f}
+.lb-score small{font-size:20px;color:#aed9f8;margin-inline-start:4px}
+
 #debugOverlay{position:absolute;z-index:200;top:560px;left:18px;width:500px;padding:18px;border:3px solid #ffde55;background:rgba(0,0,0,.83);color:#fff;font:22px/1.35 Consolas,monospace;text-align:left;white-space:pre-wrap;pointer-events:none;direction:ltr}.debug-mode .keeper-box,.debug-mode .ball-box{outline:5px solid #ffde55}
 
 @keyframes flash{0%{opacity:0}18%{opacity:1}100%{opacity:0}}
@@ -217,12 +251,14 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
           <div class="status-banner" id="status" role="status" aria-live="assertive"></div>
           <div class="grass-burst" id="grassBurst"></div>
           <div class="confetti" id="confetti"></div>
+          <div class="combo-banner" id="comboBanner" hidden></div>
           <div id="gestureLayer"></div>
         </section>
 
         <div class="instruction" id="instruction"></div>
         <div class="swipe-feedback" id="swipeFeedback"><span id="powerLabel"></span><div class="swipe-track"><div class="swipe-fill" id="powerFill"></div></div><strong id="powerValue">0%</strong></div>
         <footer class="bottom-tools">
+          <button class="icon-button" id="leaderboardBtn" type="button" aria-label="Leaderboard">🏆</button>
           <button class="icon-button" id="sound" type="button" aria-label="Sound">🔊</button>
           <button class="icon-button" id="help" type="button" aria-label="Help">?</button>
         </footer>
@@ -242,6 +278,7 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
           <div class="premium-panel">
             <div class="intro-match"><div class="intro-side"><span class="flag" id="introTeamFlag"></span><strong id="introTeamName"></strong></div><div class="intro-vs">VS</div><div class="intro-side"><span class="flag" id="introRivalFlag"></span><strong id="introRivalName"></strong></div></div>
             <div class="rules"><div class="rule"><strong>8</strong><span id="introGoalRule"></span></div><div class="rule"><strong>1</strong><span id="introLifeRule"></span></div></div>
+            <div class="streak-pill" id="introStreakPill">🔥 <span id="introStreakCount">1</span> <span id="introStreakLabel">سلسلة أيام</span></div>
           </div>
           <button class="primary" id="play" type="button"></button>
           <button class="secondary" id="introTeams" type="button"></button>
@@ -286,6 +323,11 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
             <div class="result-message"><img src="assets/credit.webp" alt=""><span id="resultMessage"></span></div>
             <div class="result-stats"><div><strong id="resultAccuracy">0%</strong><span id="resultAccuracyLabel"></span></div><div><strong id="resultShots">0</strong><span id="resultShotsLabel"></span></div></div>
 
+            <div class="personal-record-bar" id="personalRecordBar">
+              <span id="pbLabel">🏆 رقمك القياسي:</span> <strong id="pbScore">0</strong>
+              <span class="record-new-tag" id="newRecordTag" hidden>NEW!</span>
+            </div>
+
             <div class="sponsor-card" id="sponsorCard">
               <div class="sponsor-header">
                 <span class="sponsor-badge" id="sponsorBadge">🎁 شريك VIP الحصري</span>
@@ -301,7 +343,33 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
               </div>
             </div>
 
-            <div class="result-actions"><button class="primary" id="claim" type="button"></button><button class="secondary" id="replay" type="button"></button><button class="secondary" id="changeTeam" type="button"></button></div>
+            <div class="result-actions">
+              <button class="primary" id="claim" type="button"></button>
+              <button class="challenge-btn" id="challengeFriend" type="button"></button>
+              <button class="secondary" id="leaderboardResultBtn" type="button"></button>
+              <button class="secondary" id="replay" type="button"></button>
+              <button class="secondary" id="changeTeam" type="button"></button>
+            </div>
+          </div>
+        </section>
+
+        <section class="overlay leaderboard-overlay" id="leaderboardOverlay" hidden>
+          <div class="premium-panel leaderboard-panel">
+            <span class="eyebrow" id="lbEyebrow"></span>
+            <h1 id="lbTitle"></h1>
+            <p class="lb-incentive" id="lbIncentive"></p>
+
+            <div class="lb-my-card">
+              <div class="lb-my-rank"><span id="lbMyRankLabel"></span><strong id="lbMyRankValue">#--</strong></div>
+              <div class="lb-my-stats">
+                <div><span id="lbPbLabel"></span><strong id="lbPbValue">0</strong></div>
+                <div><span id="lbStreakLabel"></span><strong id="lbStreakValue">🔥 1</strong></div>
+              </div>
+            </div>
+
+            <div class="lb-list" id="lbList"></div>
+
+            <button class="primary" id="lbClose" type="button"></button>
           </div>
         </section>
 
@@ -336,8 +404,8 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
     hudSafe:{top:42,bottom:30}
   });
   var copy={
-    ar:{brand:'ماجد للتوقعات',title:'ركلة الحسم',pick:'اختر فريقك',pickHint:'اختر أحد الفريقين لبدء تحدي ركلات الحسم.',playAs:'العب بهذا الفريق',you:'فريقك',rival:'الخصم',mode:'تحدي الرصيد',shot:'التسديدة',score:'الأهداف',remaining:'المتبقي',lives:'الفرص',instruction:'اسحب الكرة نحو المرمى أو اضغط سدّد',shoot:'سدّد',power:'القوة',accuracy:'الدقة',introGoals:'أهداف لفتح المكافأة',introLives:'محاولتان قبل نهاية الجولة',play:'ابدأ المباراة',teams:'تغيير الفريق',tutorialEye:'طريقة اللعب',tutorialTitle:'سدّد بثقة',tutorialAim:'اسحب باتجاه الزاوية التي تريدها.',tutorialPower:'طول السحبة يحدد قوة التسديدة.',tutorialKeeper:'الحارس سيتحرك، لذا اختر توقيتك بعناية.',startMatch:'ابدأ التحدي',skip:'تخطي الشرح',pauseEye:'المباراة متوقفة',pause:'إيقاف مؤقت',resume:'متابعة',restart:'إعادة الجولة',help:'طريقة اللعب',soundOn:'المؤثرات: مفعلة',soundOff:'المؤثرات: متوقفة',musicOn:'الموسيقى: مفعلة',musicOff:'الموسيقى: متوقفة',returnTeams:'العودة للفرق',goal:'هدف!',saved:'تصدٍ رائع!',missed:'خارج المرمى!',post:'في القائم!',perfect:'مثالية',great:'رائعة',good:'جيدة',weak:'ضعيفة',winEye:'تم فتح المكافأة',win:'أحسنت!',loseEye:'انتهت الجولة',lose:'محاولة قوية',won:'ربحت رصيد توقع مجاني.',need:'سجّل ٨ أهداف لتحصل على الرصيد.',claim:'استلم التوقع المجاني',send:'أرسل النتيجة',replay:'العب مجدداً',change:'غيّر الفريق',back:'رجوع',pauseButton:'إيقاف مؤقت',sound:'الصوت',adTag1:'بونص ترحيبي 200% بكود MAJEDAI',adTag2:'سجّل الآن بكود MAJEDAI واحصل على 30 يوم VIP',sponsorBadge:'🎁 شريك VIP الحصري',sponsorPromo:'كود:',sponsorTitle:'بونص ترحيبي 200% + 30 يوم VIP مجاناً! 💎',sponsorDesc:'سجّل في 1xBet أو Melbet بالرمز MAJEDAI للحصول على بونص مضاعف و 30 يوماً VIP مجاناً.',btn1x:'🎰 1xBet (بونص 200%)',btnMel:'🎁 Melbet (بونص 200%)'},
-    en:{brand:'Majed Predictions',title:'Penalty Rush',pick:'Choose your team',pickHint:'Choose either side to begin the penalty challenge.',playAs:'Play as this team',you:'Your team',rival:'Opponent',mode:'Credit Challenge',shot:'Shot',score:'Goals',remaining:'Remaining',lives:'Chances',instruction:'Swipe the ball toward goal or tap Shoot',shoot:'Shoot',power:'Power',accuracy:'Accuracy',introGoals:'goals unlock the reward',introLives:'chances before the round ends',play:'Start match',teams:'Change team',tutorialEye:'How to play',tutorialTitle:'Strike with confidence',tutorialAim:'Swipe toward the corner you want to hit.',tutorialPower:'Swipe distance controls shot power.',tutorialKeeper:'The keeper reacts, so choose your timing.',startMatch:'Start challenge',skip:'Skip tutorial',pauseEye:'Match paused',pause:'Paused',resume:'Resume',restart:'Restart round',help:'How to play',soundOn:'SFX: On',soundOff:'SFX: Off',musicOn:'Music: On',musicOff:'Music: Off',returnTeams:'Return to teams',goal:'Goal!',saved:'Great save!',missed:'Wide!',post:'Off the post!',perfect:'Perfect',great:'Great',good:'Good',weak:'Weak',winEye:'Reward unlocked',win:'Well played!',loseEye:'Round over',lose:'Strong attempt',won:'You earned a free prediction credit.',need:'Score 8 goals to earn the credit.',claim:'Claim free prediction',send:'Send result',replay:'Play again',change:'Change team',back:'Back',pauseButton:'Pause',sound:'Sound',adTag1:'200% Welcome Bonus with code MAJEDAI',adTag2:'Register with code MAJEDAI & get 30 Days VIP',sponsorBadge:'🎁 EXCLUSIVE VIP PARTNER',sponsorPromo:'CODE:',sponsorTitle:'200% Deposit Bonus + 30 Days Free VIP! 💎',sponsorDesc:'Register on 1xBet or Melbet with code MAJEDAI to claim your bonus & unlock 30 Days of VIP free.',btn1x:'🎰 1xBet (200% Bonus)',btnMel:'🎁 Melbet (200% Bonus)'}
+    ar:{brand:'ماجد للتوقعات',title:'ركلة الحسم',pick:'اختر فريقك',pickHint:'اختر أحد الفريقين لبدء تحدي ركلات الحسم.',playAs:'العب بهذا الفريق',you:'فريقك',rival:'الخصم',mode:'تحدي الرصيد',shot:'التسديدة',score:'الأهداف',remaining:'المتبقي',lives:'الفرص',instruction:'اسحب الكرة نحو المرمى أو اضغط سدّد',shoot:'سدّد',power:'القوة',accuracy:'الدقة',introGoals:'أهداف لفتح المكافأة',introLives:'محاولتان قبل نهاية الجولة',play:'ابدأ المباراة',teams:'تغيير الفريق',tutorialEye:'طريقة اللعب',tutorialTitle:'سدّد بثقة',tutorialAim:'اسحب باتجاه الزاوية التي تريدها.',tutorialPower:'طول السحبة يحدد قوة التسديدة.',tutorialKeeper:'الحارس سيتحرك، لذا اختر توقيتك بعناية.',startMatch:'ابدأ التحدي',skip:'تخطي الشرح',pauseEye:'المباراة متوقفة',pause:'إيقاف مؤقت',resume:'متابعة',restart:'إعادة الجولة',help:'طريقة اللعب',soundOn:'المؤثرات: مفعلة',soundOff:'المؤثرات: متوقفة',musicOn:'الموسيقى: مفعلة',musicOff:'الموسيقى: متوقفة',returnTeams:'العودة للفرق',goal:'هدف!',saved:'تصدٍ رائع!',missed:'خارج المرمى!',post:'في القائم!',perfect:'مثالية',great:'رائعة',good:'جيدة',weak:'ضعيفة',winEye:'تم فتح المكافأة',win:'أحسنت!',loseEye:'انتهت الجولة',lose:'محاولة قوية',won:'ربحت رصيد توقع مجاني.',need:'سجّل ٨ أهداف لتحصل على الرصيد.',claim:'استلم التوقع المجاني',send:'أرسل النتيجة',replay:'العب مجدداً',change:'غيّر الفريق',back:'رجوع',pauseButton:'إيقاف مؤقت',sound:'الصوت',adTag1:'بونص ترحيبي 200% بكود MAJEDAI',adTag2:'سجّل الآن بكود MAJEDAI واحصل على 30 يوم VIP',sponsorBadge:'🎁 شريك VIP الحصري',sponsorPromo:'كود:',sponsorTitle:'بونص ترحيبي 200% + 30 يوم VIP مجاناً! 💎',sponsorDesc:'سجّل في 1xBet أو Melbet بالرمز MAJEDAI للحصول على بونص مضاعف و 30 يوماً VIP مجاناً.',btn1x:'🎰 1xBet (بونص 200%)',btnMel:'🎁 Melbet (بونص 200%)',challengeFriend:'⚔️ تحدّ صديقك برقمك',leaderboard:'🏆 المتصدرون',lbEyebrow:'🏆 لوحة الشرف',lbTitle:'أفضل الهدافين هذا الأسبوع',lbIncentive:'🎁 أفضل 3 هدافين أسبوعياً يربحون 7 أيام VIP مجاناً!',lbRank:'ترتيبك',lbPb:'أفضل رقم',lbStreak:'السلسلة',lbClose:'إغلاق لوحة الشرف',pbLabel:'🏆 رقمك القياسي:',streakLabel:'سلسلة أيام متتالية',goalsSuffix:'أهداف'},
+    en:{brand:'Majed Predictions',title:'Penalty Rush',pick:'Choose your team',pickHint:'Choose either side to begin the penalty challenge.',playAs:'Play as this team',you:'Your team',rival:'Opponent',mode:'Credit Challenge',shot:'Shot',score:'Goals',remaining:'Remaining',lives:'Chances',instruction:'Swipe the ball toward goal or tap Shoot',shoot:'Shoot',power:'Power',accuracy:'Accuracy',introGoals:'goals unlock the reward',introLives:'chances before the round ends',play:'Start match',teams:'Change team',tutorialEye:'How to play',tutorialTitle:'Strike with confidence',tutorialAim:'Swipe toward the corner you want to hit.',tutorialPower:'Swipe distance controls shot power.',tutorialKeeper:'The keeper reacts, so choose your timing.',startMatch:'Start challenge',skip:'Skip tutorial',pauseEye:'Match paused',pause:'Paused',resume:'Resume',restart:'Restart round',help:'How to play',soundOn:'SFX: On',soundOff:'SFX: Off',musicOn:'Music: On',musicOff:'Music: Off',returnTeams:'Return to teams',goal:'Goal!',saved:'Great save!',missed:'Wide!',post:'Off the post!',perfect:'Perfect',great:'Great',good:'Good',weak:'Weak',winEye:'Reward unlocked',win:'Well played!',loseEye:'Round over',lose:'Strong attempt',won:'You earned a free prediction credit.',need:'Score 8 goals to earn the credit.',claim:'Claim free prediction',send:'Send result',replay:'Play again',change:'Change team',back:'Back',pauseButton:'Pause',sound:'Sound',adTag1:'200% Welcome Bonus with code MAJEDAI',adTag2:'Register with code MAJEDAI & get 30 Days VIP',sponsorBadge:'🎁 EXCLUSIVE VIP PARTNER',sponsorPromo:'CODE:',sponsorTitle:'200% Deposit Bonus + 30 Days Free VIP! 💎',sponsorDesc:'Register on 1xBet or Melbet with code MAJEDAI to claim your bonus & unlock 30 Days of VIP free.',btn1x:'🎰 1xBet (200% Bonus)',btnMel:'🎁 Melbet (200% Bonus)',challengeFriend:'⚔️ Challenge Friend',leaderboard:'🏆 Leaderboard',lbEyebrow:'🏆 HALL OF FAME',lbTitle:'Weekly Top Strikers',lbIncentive:'🎁 Top 3 strikers each week win 7 Days of Free VIP!',lbRank:'Your Rank',lbPb:'Best Score',lbStreak:'Streak',lbClose:'Close Leaderboard',pbLabel:'🏆 Personal Best:',streakLabel:'Days Streak',goalsSuffix:'goals'}
   }[LANG];
   copy.aim=LANG==='ar'?'التصويب':'Aim';
   copy.instruction=LANG==='ar'?'ضع إصبعك على الكرة واسحب بسرعة نحو المرمى':'Touch the ball, then flick toward goal';
@@ -363,13 +431,138 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
   try{sfxMuted=localStorage.getItem('penalty-sfx-muted')==='1'||localStorage.getItem('penalty-muted')==='1';musicMuted=localStorage.getItem('penalty-music-muted')==='1'||localStorage.getItem('penalty-muted')==='1';}catch(e){}
 
   var $=function(id){return document.getElementById(id);};
-  var el={host:$('host'),safe:$('safeArea'),viewport:$('viewport'),world:$('world'),playfield:$('playfield'),score:$('score'),track:$('goalTrack'),lives:$('lives'),keeper:$('keeper'),keeperImg:$('keeperImg'),ball:$('ball'),ballShadow:$('ballShadow'),spot:$('spotGlow'),trajectory:$('trajectory'),impact:$('impact'),net:$('net'),status:$('status'),grass:$('grassBurst'),confetti:$('confetti'),gesture:$('gestureLayer'),instruction:$('instruction'),swipeFeedback:$('swipeFeedback'),powerFill:$('powerFill'),powerValue:$('powerValue'),sound:$('sound'),ambience:$('ambience'),whistle:$('whistle'),teamSelection:$('teamSelection'),matchList:$('matchList'),intro:$('introOverlay'),tutorial:$('tutorialOverlay'),pauseOverlay:$('pauseOverlay'),result:$('resultOverlay'),debug:$('debugOverlay')};
+  var el={host:$('host'),safe:$('safeArea'),viewport:$('viewport'),world:$('world'),playfield:$('playfield'),score:$('score'),track:$('goalTrack'),lives:$('lives'),keeper:$('keeper'),keeperImg:$('keeperImg'),ball:$('ball'),ballShadow:$('ballShadow'),spot:$('spotGlow'),trajectory:$('trajectory'),impact:$('impact'),net:$('net'),status:$('status'),grass:$('grassBurst'),confetti:$('confetti'),comboBanner:$('comboBanner'),gesture:$('gestureLayer'),instruction:$('instruction'),swipeFeedback:$('swipeFeedback'),powerFill:$('powerFill'),powerValue:$('powerValue'),sound:$('sound'),ambience:$('ambience'),whistle:$('whistle'),teamSelection:$('teamSelection'),matchList:$('matchList'),intro:$('introOverlay'),tutorial:$('tutorialOverlay'),pauseOverlay:$('pauseOverlay'),result:$('resultOverlay'),leaderboardOverlay:$('leaderboardOverlay'),debug:$('debugOverlay')};
   function name(t){return t[LANG];}
-  function text(id,value){$(id).textContent=value;}
+  function text(id,value){var elem=$(id);if(elem)elem.textContent=value;}
   function locale(value){return value.toLocaleString(LANG==='ar'?'ar-EG':'en-US');}
   function later(fn,ms){var id=setTimeout(function(){timers=timers.filter(function(x){return x!==id;});fn();},ms);timers.push(id);return id;}
   function clearTimers(){timers.forEach(clearTimeout);timers=[];}
-  function setOverlay(overlay){if(overlay)el.world.classList.remove('game-enter');[el.teamSelection,el.intro,el.tutorial,el.pauseOverlay,el.result].forEach(function(item){item.hidden=item!==overlay;});}
+  function setOverlay(overlay){if(overlay)el.world.classList.remove('game-enter');[el.teamSelection,el.intro,el.tutorial,el.pauseOverlay,el.result,el.leaderboardOverlay].forEach(function(item){if(item)item.hidden=item!==overlay;});}
+
+  var PB_KEY='penalty_personal_best';
+  var STREAK_KEY='penalty_daily_streak';
+  var LAST_PLAY_KEY='penalty_last_play_date';
+  var currentCombo=0;
+
+  function haptic(type,arg){
+    if(!tg||!tg.HapticFeedback)return;
+    try{
+      if(type==='impact')tg.HapticFeedback.impactOccurred(arg||'medium');
+      else if(type==='notify')tg.HapticFeedback.notificationOccurred(arg||'success');
+      else if(type==='select')tg.HapticFeedback.selectionChanged();
+    }catch(e){}
+  }
+
+  function triggerScreenShake(){
+    try{
+      el.world.classList.remove('screen-shake');
+      void el.world.offsetWidth;
+      el.world.classList.add('screen-shake');
+      later(function(){el.world.classList.remove('screen-shake');},250);
+    }catch(e){}
+  }
+
+  function showCombo(c){
+    if(c<2||!el.comboBanner)return;
+    el.comboBanner.textContent=c===2?'🔥 COMBO x2!':'⚡ ON FIRE x'+c+'!';
+    el.comboBanner.hidden=false;
+    el.comboBanner.style.animation='none';
+    void el.comboBanner.offsetWidth;
+    el.comboBanner.style.animation='';
+    later(function(){if(el.comboBanner)el.comboBanner.hidden=true;},1600);
+  }
+
+  function getPersonalBest(){try{return parseInt(localStorage.getItem(PB_KEY)||'0',10);}catch(e){return 0;}}
+  function savePersonalBest(s){
+    var pb=getPersonalBest();
+    if(s>pb){
+      try{
+        localStorage.setItem(PB_KEY,s.toString());
+        if(tg&&tg.CloudStorage){tg.CloudStorage.setItem(PB_KEY,s.toString(),function(){});}
+      }catch(e){}
+      return {newRecord:true,best:s};
+    }
+    return {newRecord:false,best:pb};
+  }
+
+  function getDailyStreak(){
+    try{
+      var today=new Date().toISOString().slice(0,10);
+      var last=localStorage.getItem(LAST_PLAY_KEY);
+      var streak=parseInt(localStorage.getItem(STREAK_KEY)||'1',10);
+      if(!last){streak=1;}
+      else if(last===today){if(streak<1)streak=1;}
+      else{
+        var diff=Math.round((new Date(today)-new Date(last))/(1000*60*60*24));
+        if(diff===1){streak+=1;}
+        else if(diff>1){streak=1;}
+      }
+      localStorage.setItem(LAST_PLAY_KEY,today);
+      localStorage.setItem(STREAK_KEY,streak.toString());
+      if(tg&&tg.CloudStorage){
+        tg.CloudStorage.setItem(LAST_PLAY_KEY,today,function(){});
+        tg.CloudStorage.setItem(STREAK_KEY,streak.toString(),function(){});
+      }
+      return streak;
+    }catch(e){return 1;}
+  }
+
+  var SEED_STRIKERS=[
+    {flag:'🇲🇦',name:'Yassine_R',score:18},
+    {flag:'🇸🇦',name:'Fahad_77',score:16},
+    {flag:'🇪🇬',name:'MoSalah_Fan',score:15},
+    {flag:'🇩🇿',name:'Tariq_DZ',score:14},
+    {flag:'🇦🇪',name:'Sultan_DXB',score:12},
+    {flag:'🇶🇦',name:'Nasser_K',score:11},
+    {flag:'🇰🇼',name:'Aziz_Q8',score:10},
+    {flag:'🇴🇲',name:'Salim_OM',score:9},
+    {flag:'🇯🇴',name:'Hamza_JO',score:9},
+    {flag:'🇮🇶',name:'Ali_IRQ',score:8}
+  ];
+
+  function renderLeaderboard(){
+    var pb=getPersonalBest();
+    var streak=getDailyStreak();
+    var user=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user?tg.initDataUnsafe.user:null;
+    var myName=user?(user.first_name||user.username||'You'):(LANG==='ar'?'أنت':'You');
+    var myFlag=team?team.f:'⚽';
+    var list=SEED_STRIKERS.map(function(s){return {flag:s.flag,name:s.name,score:s.score,isMe:false};});
+    var myRank=-1;
+    for(var i=0;i<list.length;i++){
+      if(pb>=list[i].score){
+        list.splice(i,0,{flag:myFlag,name:myName,score:pb,isMe:true});
+        myRank=i+1;
+        break;
+      }
+    }
+    if(myRank===-1){myRank=list.length+1;if(pb>0){list.push({flag:myFlag,name:myName,score:pb,isMe:true});}}
+    list=list.slice(0,10);
+    text('lbMyRankValue','#'+myRank);
+    text('lbPbValue',locale(pb));
+    text('lbStreakValue','🔥 '+locale(streak));
+    var container=$('lbList');
+    if(container){
+      container.textContent='';
+      list.forEach(function(item,idx){
+        var row=document.createElement('div');
+        row.className='lb-row'+(idx===0?' top-1':idx===1?' top-2':idx===2?' top-3':'')+(item.isMe?' is-me':'');
+        var pos=document.createElement('span');pos.className='lb-pos';pos.textContent='#'+(idx+1);
+        var player=document.createElement('div');player.className='lb-player';
+        var flag=document.createElement('span');flag.className='lb-flag';flag.textContent=item.flag;
+        var nameSpan=document.createElement('span');nameSpan.textContent=item.name;
+        player.appendChild(flag);player.appendChild(nameSpan);
+        var scoreSpan=document.createElement('div');scoreSpan.className='lb-score';scoreSpan.innerHTML=locale(item.score)+'<small>'+copy.goalsSuffix+'</small>';
+        row.appendChild(pos);row.appendChild(player);row.appendChild(scoreSpan);
+        container.appendChild(row);
+      });
+    }
+  }
+
+  function showLeaderboard(){
+    haptic('select');
+    renderLeaderboard();
+    setOverlay(el.leaderboardOverlay);
+  }
 
   function setup(){
     document.title=copy.title+' - '+copy.brand;
@@ -384,6 +577,12 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
     text('sponsorBadge',copy.sponsorBadge);text('sponsorPromoLabel',copy.sponsorPromo);
     text('sponsorTitle',copy.sponsorTitle);text('sponsorDesc',copy.sponsorDesc);
     text('btnSponsor1x',copy.btn1x);text('btnSponsorMel',copy.btnMel);
+    text('challengeFriend',copy.challengeFriend);text('leaderboardResultBtn',copy.leaderboard);text('lbClose',copy.lbClose);
+    text('lbEyebrow',copy.lbEyebrow);text('lbTitle',copy.lbTitle);text('lbIncentive',copy.lbIncentive);
+    text('lbMyRankLabel',copy.lbRank);text('lbPbLabel',copy.lbPb);text('lbStreakLabel',copy.lbStreak);
+    text('pbLabel',copy.pbLabel);text('introStreakLabel',copy.streakLabel);
+    text('introStreakCount',locale(getDailyStreak()));text('pbScore',locale(getPersonalBest()));
+    var lbBtn=$('leaderboardBtn');if(lbBtn)lbBtn.setAttribute('aria-label',copy.leaderboard);
     $('back').setAttribute('aria-label',copy.back);$('pause').setAttribute('aria-label',copy.pauseButton);el.sound.setAttribute('aria-label',copy.sound);$('help').setAttribute('aria-label',copy.help);
     for(var i=0;i<REWARD;i++){var dot=document.createElement('span');dot.className='goal-dot';el.track.appendChild(dot);}
     for(var j=0;j<9;j++){var point=document.createElement('i');point.style.animationDelay=(j*.07)+'s';el.trajectory.appendChild(point);}
@@ -481,8 +680,15 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
   function reactKeeper(targetX,targetY){var direction=targetX<keeperX?'left':'right',high=targetY<LAYOUT.keeper.groundY-LAYOUT.keeper.height*.6;keeperDiving=true;animationName='keeperDive'+direction;el.keeper.className='keeper-box dive-'+direction+(high?' dive-high':'');el.keeperImg.src=direction==='left'?'assets/keeper_left.webp':'assets/keeper_right.webp';}
   function resolveShot(outcome,x,y,shotPower){
     el.playfield.className='impact-'+outcome;el.impact.style.setProperty('--impact-x',x+'px');el.impact.style.setProperty('--impact-y',y+'px');el.impact.className='impact '+outcome;showStatus(outcome);animationName=outcome;
-    if(outcome==='goal'){score++;el.net.classList.remove('goal');void el.net.offsetWidth;el.net.classList.add('goal');haptic('medium');}else{misses++;haptic('heavy');}playSound(outcome);
-    updateHud();
+    if(outcome==='goal'){
+      score++;currentCombo++;el.net.classList.remove('goal');void el.net.offsetWidth;el.net.classList.add('goal');
+      haptic('notify','success');showCombo(currentCombo);
+    }else if(outcome==='post'){
+      misses++;currentCombo=0;triggerScreenShake();haptic('notify','warning');
+    }else{
+      misses++;currentCombo=0;haptic('notify','error');
+    }
+    playSound(outcome);updateHud();
     if(score>=REWARD){later(function(){finish(true);},1150);return;}if(misses>=LIVES){later(function(){finish(false);},1150);return;}later(resetForNextShot,1250);
   }
   function showStatus(outcome){var labels={goal:copy.goal,save:copy.saved,miss:copy.missed,post:copy.post};el.status.textContent=labels[outcome];el.status.style.color=outcome==='goal'?'var(--gold)':'#fff';el.status.classList.remove('show');void el.status.offsetWidth;el.status.classList.add('show');}
@@ -495,14 +701,17 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
     var changed=lastHudScore>=0&&lastHudScore!==score;el.score.textContent=locale(score);if(changed){el.score.classList.remove('score-pop');void el.score.offsetWidth;el.score.classList.add('score-pop');}lastHudScore=score;text('remaining',locale(Math.max(0,REWARD-score)));text('shotLabel',copy.shot+' '+locale(shots+1));var dots=el.track.children;for(var i=0;i<dots.length;i++)dots[i].classList.toggle('on',i<score);var hearts=el.lives.children;for(var j=0;j<hearts.length;j++)hearts[j].classList.toggle('lost',j>=LIVES-misses);updateDebug();
   }
   function finish(won){
-    active=false;busy=true;keeperFrozen=true;animationName=won?'win':'lose';setOverlay(el.result);text('resultEyebrow',won?copy.winEye:copy.loseEye);text('resultTitle',won?copy.win:copy.lose);text('resultScore',locale(score));text('resultScoreLabel',copy.score);text('resultMessage',won?copy.won:copy.need);text('resultAccuracy',Math.round(score/Math.max(1,shots)*100)+'%');text('resultShots',locale(shots));text('claim',won?copy.claim:copy.send);$('claim').hidden=!inTelegram;if(won){confetti();playSound('win');haptic('medium');}
+    active=false;busy=true;keeperFrozen=true;animationName=won?'win':'lose';
+    var recordInfo=savePersonalBest(score);
+    text('pbScore',locale(recordInfo.best));
+    var newTag=$('newRecordTag');if(newTag)newTag.hidden=!recordInfo.newRecord;
+    setOverlay(el.result);text('resultEyebrow',won?copy.winEye:copy.loseEye);text('resultTitle',won?copy.win:copy.lose);text('resultScore',locale(score));text('resultScoreLabel',copy.score);text('resultMessage',won?copy.won:copy.need);text('resultAccuracy',Math.round(score/Math.max(1,shots)*100)+'%');text('resultShots',locale(shots));text('claim',won?copy.claim:copy.send);$('claim').hidden=!inTelegram;if(won){confetti();playSound('win');haptic('notify','success');}
   }
   function submit(){if(!tg)return;try{tg.sendData(JSON.stringify({score:score,team:name(team),t:params.get('t')||''}));tg.close();}catch(e){}}
 
   function grassBurst(){el.grass.textContent='';for(var i=0;i<12;i++){var blade=document.createElement('i');blade.style.setProperty('--grass-x',((Math.random()-.5)*190)+'px');blade.style.setProperty('--grass-y',(-40-Math.random()*110)+'px');blade.style.setProperty('--grass-r',(Math.random()*160-80)+'deg');blade.style.animationDelay=(Math.random()*.08)+'s';el.grass.appendChild(blade);}}
   function confetti(){clearConfetti();var colors=['#ffd34f','#45d8ff','#55dc57','#ff5968','#ffffff'];for(var i=0;i<42;i++){var piece=document.createElement('i');piece.style.left=(Math.random()*100)+'%';piece.style.background=colors[i%colors.length];piece.style.setProperty('--drift',((Math.random()-.5)*260)+'px');piece.style.animationDelay=(Math.random()*.35)+'s';el.confetti.appendChild(piece);}}
   function clearConfetti(){el.confetti.textContent='';}
-  function haptic(kind){if(tg&&tg.HapticFeedback&&(!tg.isVersionAtLeast||tg.isVersionAtLeast('6.1'))){try{tg.HapticFeedback.impactOccurred(kind);}catch(e){}}}
 
   function ensureAudio(){if(audioCtx)return audioCtx;try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();master=audioCtx.createGain();master.gain.value=sfxMuted?0:1;master.connect(audioCtx.destination);var length=audioCtx.sampleRate*.45;noiseBuffer=audioCtx.createBuffer(1,length,audioCtx.sampleRate);var data=noiseBuffer.getChannelData(0);for(var i=0;i<length;i++)data[i]=Math.random()*2-1;}catch(e){audioCtx=null;}return audioCtx;}
   function startAudio(){var ctx=ensureAudio();if(ctx&&ctx.state==='suspended')ctx.resume().catch(function(){});if(!musicMuted){el.ambience.volume=.18;el.ambience.play().catch(function(){});}}
@@ -526,6 +735,31 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
   $('back').addEventListener('click',function(){if(active)pauseGame();else showTeams();});$('pause').addEventListener('click',pauseGame);$('play').addEventListener('click',playFromIntro);$('introTeams').addEventListener('click',showTeams);$('tutorialStart').addEventListener('click',finishTutorial);$('tutorialSkip').addEventListener('click',finishTutorial);
   $('resume').addEventListener('click',resumeGame);$('restart').addEventListener('click',startRound);$('pauseTutorial').addEventListener('click',function(){showTutorial('resume');});$('toggleSfx').addEventListener('click',toggleSfx);$('toggleMusic').addEventListener('click',toggleMusic);$('returnTeams').addEventListener('click',showTeams);
   $('claim').addEventListener('click',submit);$('replay').addEventListener('click',startRound);$('changeTeam').addEventListener('click',showTeams);
+  if($('leaderboardBtn')) $('leaderboardBtn').addEventListener('click', showLeaderboard);
+  if($('leaderboardResultBtn')) $('leaderboardResultBtn').addEventListener('click', showLeaderboard);
+  if($('lbClose')) $('lbClose').addEventListener('click', function(){
+    haptic('select');
+    if(active&&!busy) setOverlay(null);
+    else if(!active&&shots>0) setOverlay(el.result);
+    else showTeams();
+  });
+  if($('challengeFriend')) $('challengeFriend').addEventListener('click', function(){
+    haptic('select');
+    var user=tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user?tg.initDataUnsafe.user:null;
+    var uid=user?user.id:(params.get('user_id')||'');
+    var botUser=LANG==='ar'?'majeedpredictionbot':'aimessiahbot';
+    var refParam=uid?'?start=r_'+uid:'';
+    var refUrl='https://t.me/'+botUser+refParam;
+    var msg=LANG==='ar'
+      ?('⚽ سدّدت '+score+' أهداف في تحدي ركلات الحسم! هل تقدر تكسر رقمي؟ العب الآن وجرّب حظك 🔥👇')
+      :('⚽ I scored '+score+' goals in Penalty Rush! Can you beat my high score? Play now 🔥👇');
+    var shareUrl='https://t.me/share/url?url='+encodeURIComponent(refUrl)+'&text='+encodeURIComponent(msg);
+    if(tg&&tg.openTelegramLink){
+      try{tg.openTelegramLink(shareUrl);}catch(e){window.open(shareUrl,'_blank');}
+    }else{
+      window.open(shareUrl,'_blank');
+    }
+  });
   var AFFILIATE_URLS={onex:'https://reffpa.com/L?tag=d_5637867m_1599c_&site=5637867&ad=1599',melbet:'https://reffpa.com/L?tag=d_6043134m_1599c_&site=6043134&ad=1599'};
   function openSponsor(partner){var url=AFFILIATE_URLS[partner]||AFFILIATE_URLS.onex;if(tg&&tg.openLink){try{tg.openLink(url);}catch(e){window.open(url,'_blank');}}else{window.open(url,'_blank');}}
   var adCycle=0;
