@@ -146,6 +146,24 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
 .lb-my-stats div{text-align:center}
 .lb-my-stats span{display:block;color:#aed9f8;font-size:22px}
 .lb-my-stats strong{color:#ffd34f;font-family:var(--display);font-size:38px}
+
+.podium-showcase{display:flex;align-items:flex-end;justify-content:center;gap:18px;margin:12px 0 28px}
+.podium-card{display:flex;flex-direction:column;align-items:center;text-align:center;width:250px}
+.podium-card.rank-1{width:280px;transform:translateY(-18px)}
+.podium-frame-wrap{position:relative;width:190px;height:280px;display:flex;align-items:center;justify-content:center}
+.podium-card.rank-1 .podium-frame-wrap{width:215px;height:310px;filter:drop-shadow(0 0 18px rgba(255,211,79,.45))}
+.podium-card.rank-2 .podium-frame-wrap{filter:drop-shadow(0 0 14px rgba(176,224,255,.35))}
+.podium-card.rank-3 .podium-frame-wrap{filter:drop-shadow(0 0 14px rgba(205,127,50,.35))}
+.podium-frame-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.podium-avatar{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);width:92px;height:92px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(10,24,40,.6)}
+.podium-card.rank-1 .podium-avatar{top:41%;width:108px;height:108px}
+.podium-flag{font-size:56px;line-height:1}
+.podium-card.rank-1 .podium-flag{font-size:66px}
+.podium-name{margin-top:8px;color:#ffffff;font-size:24px;font-weight:800;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.podium-card.rank-1 .podium-name{color:#ffd34f;font-size:26px}
+.podium-score{color:#ffd34f;font-family:var(--display);font-size:30px;font-weight:800}
+.podium-score small{font-size:18px;color:#aed9f8;margin-inline-start:4px}
+
 .lb-list{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
 .lb-row{display:grid;grid-template-columns:80px 1fr 140px;align-items:center;padding:16px 20px;border-radius:8px;background:rgba(10,24,40,.85);border:2px solid #284762}
 .lb-row.top-1{border-color:#ffd34f;background:rgba(255,211,79,.12)}
@@ -367,6 +385,38 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
               </div>
             </div>
 
+            <div class="podium-showcase" id="podiumShowcase">
+              <!-- Rank 2: Silver (Left) -->
+              <div class="podium-card rank-2">
+                <div class="podium-frame-wrap">
+                  <img class="podium-frame-img" src="assets/frame_silver.webp" alt="Rank 2">
+                  <div class="podium-avatar"><span class="podium-flag" id="p2Flag">🇸🇦</span></div>
+                </div>
+                <strong class="podium-name" id="p2Name">Fahad_77</strong>
+                <span class="podium-score" id="p2Score">16</span>
+              </div>
+
+              <!-- Rank 1: Gold (Center & Elevated) -->
+              <div class="podium-card rank-1">
+                <div class="podium-frame-wrap">
+                  <img class="podium-frame-img" src="assets/frame_gold.webp" alt="Rank 1">
+                  <div class="podium-avatar"><span class="podium-flag" id="p1Flag">🇲🇦</span></div>
+                </div>
+                <strong class="podium-name" id="p1Name">Yassine_R</strong>
+                <span class="podium-score" id="p1Score">18</span>
+              </div>
+
+              <!-- Rank 3: Bronze (Right) -->
+              <div class="podium-card rank-3">
+                <div class="podium-frame-wrap">
+                  <img class="podium-frame-img" src="assets/frame_bronze.webp" alt="Rank 3">
+                  <div class="podium-avatar"><span class="podium-flag" id="p3Flag">🇪🇬</span></div>
+                </div>
+                <strong class="podium-name" id="p3Name">MoSalah_Fan</strong>
+                <span class="podium-score" id="p3Score">15</span>
+              </div>
+            </div>
+
             <div class="lb-list" id="lbList"></div>
 
             <button class="primary" id="lbClose" type="button"></button>
@@ -540,13 +590,28 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
     text('lbMyRankValue','#'+myRank);
     text('lbPbValue',locale(pb));
     text('lbStreakValue','🔥 '+locale(streak));
+
+    // Update Podium Top 3 Frames
+    if(list[0]){
+      text('p1Flag',list[0].flag);text('p1Name',list[0].name);
+      var p1S=$('p1Score');if(p1S)p1S.innerHTML=locale(list[0].score)+'<small> '+copy.goalsSuffix+'</small>';
+    }
+    if(list[1]){
+      text('p2Flag',list[1].flag);text('p2Name',list[1].name);
+      var p2S=$('p2Score');if(p2S)p2S.innerHTML=locale(list[1].score)+'<small> '+copy.goalsSuffix+'</small>';
+    }
+    if(list[2]){
+      text('p3Flag',list[2].flag);text('p3Name',list[2].name);
+      var p3S=$('p3Score');if(p3S)p3S.innerHTML=locale(list[2].score)+'<small> '+copy.goalsSuffix+'</small>';
+    }
+
     var container=$('lbList');
     if(container){
       container.textContent='';
-      list.forEach(function(item,idx){
+      list.slice(3).forEach(function(item,idx){
         var row=document.createElement('div');
-        row.className='lb-row'+(idx===0?' top-1':idx===1?' top-2':idx===2?' top-3':'')+(item.isMe?' is-me':'');
-        var pos=document.createElement('span');pos.className='lb-pos';pos.textContent='#'+(idx+1);
+        row.className='lb-row'+(item.isMe?' is-me':'');
+        var pos=document.createElement('span');pos.className='lb-pos';pos.textContent='#'+(idx+4);
         var player=document.createElement('div');player.className='lb-player';
         var flag=document.createElement('span');flag.className='lb-flag';flag.textContent=item.flag;
         var nameSpan=document.createElement('span');nameSpan.textContent=item.name;
