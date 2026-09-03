@@ -778,14 +778,155 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
   function confetti(){clearConfetti();var colors=['#ffd34f','#45d8ff','#55dc57','#ff5968','#ffffff'];for(var i=0;i<42;i++){var piece=document.createElement('i');piece.style.left=(Math.random()*100)+'%';piece.style.background=colors[i%colors.length];piece.style.setProperty('--drift',((Math.random()-.5)*260)+'px');piece.style.animationDelay=(Math.random()*.35)+'s';el.confetti.appendChild(piece);}}
   function clearConfetti(){el.confetti.textContent='';}
 
-  function ensureAudio(){if(audioCtx)return audioCtx;try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();master=audioCtx.createGain();master.gain.value=sfxMuted?0:1;master.connect(audioCtx.destination);var length=audioCtx.sampleRate*.45;noiseBuffer=audioCtx.createBuffer(1,length,audioCtx.sampleRate);var data=noiseBuffer.getChannelData(0);for(var i=0;i<length;i++)data[i]=Math.random()*2-1;}catch(e){audioCtx=null;}return audioCtx;}
-  function startAudio(){var ctx=ensureAudio();if(ctx&&ctx.state==='suspended')ctx.resume().catch(function(){});if(!musicMuted){el.ambience.volume=.18;el.ambience.play().catch(function(){});}}
-  function playWhistle(){if(sfxMuted)return;el.whistle.currentTime=0;el.whistle.volume=.55;el.whistle.play().catch(function(){});}
-  function tone(freq,duration,type,volume,delay){var ctx=ensureAudio();if(!ctx||sfxMuted)return;var at=ctx.currentTime+(delay||0),osc=ctx.createOscillator(),gain=ctx.createGain();osc.type=type||'sine';osc.frequency.value=freq;gain.gain.setValueAtTime(volume||.05,at);gain.gain.exponentialRampToValueAtTime(.0001,at+duration);osc.connect(gain);gain.connect(master);osc.start(at);osc.stop(at+duration);}
-  function noise(duration,volume){var ctx=ensureAudio();if(!ctx||sfxMuted||!noiseBuffer)return;var source=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),gain=ctx.createGain(),at=ctx.currentTime;source.buffer=noiseBuffer;filter.type='lowpass';filter.frequency.value=520;gain.gain.setValueAtTime(volume,at);gain.gain.exponentialRampToValueAtTime(.0001,at+duration);source.connect(filter);filter.connect(gain);gain.connect(master);source.start(at);source.stop(at+duration);}
+  function ensureAudio(){
+    if(audioCtx)return audioCtx;
+    try{
+      var AudioContextClass=window.AudioContext||window.webkitAudioContext;
+      if(!AudioContextClass)return null;
+      audioCtx=new AudioContextClass();
+
+      var comp=audioCtx.createDynamicsCompressor();
+      comp.threshold.setValueAtTime(-14,audioCtx.currentTime);
+      comp.knee.setValueAtTime(6,audioCtx.currentTime);
+      comp.ratio.setValueAtTime(4,audioCtx.currentTime);
+      comp.attack.setValueAtTime(0.002,audioCtx.currentTime);
+      comp.release.setValueAtTime(0.12,audioCtx.currentTime);
+      comp.connect(audioCtx.destination);
+
+      master=audioCtx.createGain();
+      master.gain.setValueAtTime(sfxMuted?0:0.9,audioCtx.currentTime);
+      master.connect(comp);
+
+      var length=Math.round(audioCtx.sampleRate*.6);
+      noiseBuffer=audioCtx.createBuffer(1,length,audioCtx.sampleRate);
+      var data=noiseBuffer.getChannelData(0);
+      for(var i=0;i<length;i++)data[i]=Math.random()*2-1;
+    }catch(e){audioCtx=null;}
+    return audioCtx;
+  }
+  function startAudio(){
+    var ctx=ensureAudio();
+    if(ctx&&ctx.state==='suspended')ctx.resume().catch(function(){});
+    if(!musicMuted){el.ambience.volume=.18;el.ambience.play().catch(function(){});}
+  }
+  function unlockAudio(){
+    var ctx=ensureAudio();
+    if(ctx&&ctx.state==='suspended'){
+      ctx.resume().catch(function(){});
+    }
+  }
+  ['touchstart','touchend','pointerdown','click'].forEach(function(evt){
+    window.addEventListener(evt,unlockAudio,{passive:true});
+  });
+
+  function playWhistle(){if(sfxMuted)return;el.whistle.currentTime=0;el.whistle.volume=.6;el.whistle.play().catch(function(){});}
   function crowdSwell(volume,duration){if(musicMuted)return;el.ambience.volume=volume;later(function(){el.ambience.volume=.18;},duration);}
+
   function playSound(cue){
-    if(cue==='grab')tone(210,.045,'sine',.018);if(cue==='charge')tone(360,.065,'sine',.022);if(cue==='kick'){tone(92,.13,'sine',.09);noise(.12,.075);}if(cue==='goal'){noise(.16,.045);crowdSwell(.34,900);}if(cue==='save'){tone(105,.18,'sine',.06);noise(.18,.07);}if(cue==='post'){tone(1280,.22,'sine',.055);tone(920,.3,'sine',.025,.025);}if(cue==='miss'){tone(82,.2,'sine',.025);noise(.12,.02);}if(cue==='win'){crowdSwell(.42,1500);tone(196,.24,'sine',.035);}
+    if(sfxMuted)return;
+    var ctx=ensureAudio();
+    if(!ctx)return;
+    if(ctx.state==='suspended'){ctx.resume().catch(function(){});}
+    var t=ctx.currentTime;
+
+    if(cue==='grab'){
+      var osc=ctx.createOscillator(),g=ctx.createGain();
+      osc.type='sine';osc.frequency.setValueAtTime(320,t);osc.frequency.exponentialRampToValueAtTime(160,t+0.05);
+      g.gain.setValueAtTime(0.2,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.05);
+      osc.connect(g);g.connect(master);osc.start(t);osc.stop(t+0.05);
+    }
+    else if(cue==='charge'){
+      var osc=ctx.createOscillator(),g=ctx.createGain();
+      osc.type='triangle';osc.frequency.setValueAtTime(340,t);osc.frequency.exponentialRampToValueAtTime(680,t+0.09);
+      g.gain.setValueAtTime(0.18,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.09);
+      osc.connect(g);g.connect(master);osc.start(t);osc.stop(t+0.09);
+    }
+    else if(cue==='kick'){
+      // Punchy leather ball strike
+      var osc=ctx.createOscillator(),g=ctx.createGain();
+      osc.type='triangle';osc.frequency.setValueAtTime(260,t);osc.frequency.exponentialRampToValueAtTime(50,t+0.16);
+      g.gain.setValueAtTime(0.48,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.16);
+      osc.connect(g);g.connect(master);osc.start(t);osc.stop(t+0.16);
+
+      if(noiseBuffer){
+        var snap=ctx.createBufferSource(),snapF=ctx.createBiquadFilter(),snapG=ctx.createGain();
+        snap.buffer=noiseBuffer;snapF.type='bandpass';snapF.frequency.value=1200;snapF.Q.value=1.4;
+        snapG.gain.setValueAtTime(0.32,t);snapG.gain.exponentialRampToValueAtTime(0.001,t+0.05);
+        snap.connect(snapF);snapF.connect(snapG);snapG.connect(master);
+        snap.start(t);snap.stop(t+0.05);
+      }
+    }
+    else if(cue==='goal'){
+      // Net swish + celebration fanfare
+      if(noiseBuffer){
+        var net=ctx.createBufferSource(),netF=ctx.createBiquadFilter(),netG=ctx.createGain();
+        net.buffer=noiseBuffer;netF.type='bandpass';netF.frequency.value=1800;netF.Q.value=1.1;
+        netG.gain.setValueAtTime(0.4,t);netG.gain.exponentialRampToValueAtTime(0.001,t+0.25);
+        net.connect(netF);netF.connect(netG);netG.connect(master);
+        net.start(t);net.stop(t+0.25);
+      }
+      var notes=[523.25, 659.25, 783.99, 1046.50];
+      notes.forEach(function(freq,idx){
+        var chOsc=ctx.createOscillator(),chG=ctx.createGain();
+        chOsc.type='sine';chOsc.frequency.value=freq;
+        var st=t+idx*0.065;
+        chG.gain.setValueAtTime(0.24,st);chG.gain.exponentialRampToValueAtTime(0.001,st+0.32);
+        chOsc.connect(chG);chG.connect(master);chOsc.start(st);chOsc.stop(st+0.32);
+      });
+      crowdSwell(0.65,1800);
+    }
+    else if(cue==='post'){
+      // Steel crossbar ringing CLANG
+      var freqs=[1480, 2240, 3180];
+      freqs.forEach(function(f,idx){
+        var pOsc=ctx.createOscillator(),pG=ctx.createGain();
+        pOsc.type=idx===0?'triangle':'sine';pOsc.frequency.value=f;
+        pG.gain.setValueAtTime(idx===0?0.38:0.22,t);pG.gain.exponentialRampToValueAtTime(0.0001,t+0.45);
+        pOsc.connect(pG);pG.connect(master);pOsc.start(t);pOsc.stop(t+0.45);
+      });
+      var strikeOsc=ctx.createOscillator(),sG=ctx.createGain();
+      strikeOsc.type='square';strikeOsc.frequency.setValueAtTime(880,t);strikeOsc.frequency.exponentialRampToValueAtTime(240,t+0.04);
+      sG.gain.setValueAtTime(0.3,t);sG.gain.exponentialRampToValueAtTime(0.001,t+0.04);
+      strikeOsc.connect(sG);sG.connect(master);strikeOsc.start(t);strikeOsc.stop(t+0.04);
+    }
+    else if(cue==='save'){
+      // Goalie glove slap
+      var sOsc=ctx.createOscillator(),sG=ctx.createGain();
+      sOsc.type='triangle';sOsc.frequency.setValueAtTime(320,t);sOsc.frequency.exponentialRampToValueAtTime(95,t+0.18);
+      sG.gain.setValueAtTime(0.42,t);sG.gain.exponentialRampToValueAtTime(0.001,t+0.18);
+      sOsc.connect(sG);sG.connect(master);sOsc.start(t);sOsc.stop(t+0.18);
+      if(noiseBuffer){
+        var glove=ctx.createBufferSource(),gF=ctx.createBiquadFilter(),gG=ctx.createGain();
+        gG.gain.setValueAtTime(0.28,t);gG.gain.exponentialRampToValueAtTime(0.001,t+0.12);
+        gF.type='lowpass';gF.frequency.value=650;
+        glove.buffer=noiseBuffer;glove.connect(gF);gF.connect(gG);gG.connect(master);
+        glove.start(t);glove.stop(t+0.12);
+      }
+    }
+    else if(cue==='miss'){
+      // Fast air whoosh
+      if(noiseBuffer){
+        var whoosh=ctx.createBufferSource(),wF=ctx.createBiquadFilter(),wG=ctx.createGain();
+        whoosh.buffer=noiseBuffer;wF.type='bandpass';wF.frequency.setValueAtTime(950,t);
+        wF.frequency.exponentialRampToValueAtTime(220,t+0.28);
+        wG.gain.setValueAtTime(0.28,t);wG.gain.exponentialRampToValueAtTime(0.001,t+0.28);
+        whoosh.connect(wF);wF.connect(wG);wG.connect(master);
+        whoosh.start(t);whoosh.stop(t+0.28);
+      }
+    }
+    else if(cue==='win'){
+      crowdSwell(0.75,2500);
+      var chords=[[523.25,659.25,783.99],[587.33,739.99,880.00],[659.25,830.61,987.77],[783.99,987.77,1174.66],[1046.50,1318.51,1567.98]];
+      chords.forEach(function(chord,cIdx){
+        var cTime=t+cIdx*0.14;
+        chord.forEach(function(freq){
+          var wOsc=ctx.createOscillator(),wG=ctx.createGain();
+          wOsc.type='triangle';wOsc.frequency.value=freq;
+          wG.gain.setValueAtTime(0.14,cTime);wG.gain.exponentialRampToValueAtTime(0.001,cTime+0.35);
+          wOsc.connect(wG);wG.connect(master);wOsc.start(cTime);wOsc.stop(cTime+0.35);
+        });
+      });
+    }
   }
   function updateAudioButtons(){text('toggleSfx',sfxMuted?copy.soundOff:copy.soundOn);text('toggleMusic',musicMuted?copy.musicOff:copy.musicOn);el.sound.textContent=sfxMuted&&musicMuted?'🔇':'🔊';el.ambience.muted=musicMuted;el.whistle.muted=sfxMuted;if(master)master.gain.value=sfxMuted?0:1;}
   function toggleSfx(){sfxMuted=!sfxMuted;try{localStorage.setItem('penalty-sfx-muted',sfxMuted?'1':'0');}catch(e){}updateAudioButtons();if(!sfxMuted)startAudio();}
