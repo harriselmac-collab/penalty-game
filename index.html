@@ -149,20 +149,22 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
 
 .podium-showcase{display:flex;align-items:flex-end;justify-content:center;gap:18px;margin:12px 0 28px}
 .podium-card{display:flex;flex-direction:column;align-items:center;text-align:center;width:250px}
-.podium-card.rank-1{width:280px;transform:translateY(-18px)}
-.podium-frame-wrap{position:relative;width:190px;height:280px;display:flex;align-items:center;justify-content:center}
-.podium-card.rank-1 .podium-frame-wrap{width:215px;height:310px;filter:drop-shadow(0 0 18px rgba(255,211,79,.45))}
-.podium-card.rank-2 .podium-frame-wrap{filter:drop-shadow(0 0 14px rgba(176,224,255,.35))}
-.podium-card.rank-3 .podium-frame-wrap{filter:drop-shadow(0 0 14px rgba(205,127,50,.35))}
-.podium-frame-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
-.podium-avatar{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);width:92px;height:92px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(10,24,40,.6)}
-.podium-card.rank-1 .podium-avatar{top:41%;width:108px;height:108px}
-.podium-flag{font-size:56px;line-height:1}
-.podium-card.rank-1 .podium-flag{font-size:66px}
-.podium-name{margin-top:8px;color:#ffffff;font-size:24px;font-weight:800;max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.podium-card.rank-1 .podium-name{color:#ffd34f;font-size:26px}
-.podium-score{color:#ffd34f;font-family:var(--display);font-size:30px;font-weight:800}
-.podium-score small{font-size:18px;color:#aed9f8;margin-inline-start:4px}
+.podium-card.rank-1{width:280px;transform:translateY(-20px)}
+.podium-frame-wrap{position:relative;width:250px;height:333px;display:flex;align-items:center;justify-content:center}
+.podium-card.rank-1 .podium-frame-wrap{width:280px;height:373px;filter:drop-shadow(0 0 22px rgba(255,211,79,.55))}
+.podium-card.rank-2 .podium-frame-wrap{filter:drop-shadow(0 0 16px rgba(176,224,255,.4))}
+.podium-card.rank-3 .podium-frame-wrap{filter:drop-shadow(0 0 16px rgba(205,127,50,.4))}
+.podium-frame-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:contain;pointer-events:none;z-index:2}
+.podium-avatar{position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);width:122px;height:122px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle, rgba(14,35,60,.92) 0%, rgba(6,16,28,.98) 100%);z-index:1;overflow:hidden}
+.podium-card.rank-1 .podium-avatar{top:36.8%;width:136px;height:136px}
+.podium-flag{font-size:74px;line-height:1}
+.podium-card.rank-1 .podium-flag{font-size:84px}
+.podium-name{position:absolute;top:70.2%;left:50%;transform:translate(-50%,-50%);width:70%;color:#ffffff;font-size:21px;font-weight:800;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;z-index:3;letter-spacing:0.3px;text-shadow:0 2px 4px rgba(0,0,0,.85)}
+.podium-card.rank-1 .podium-name{top:74.0%;font-size:23px;color:#ffd34f;text-shadow:0 0 10px rgba(255,211,79,.4), 0 2px 5px rgba(0,0,0,.9)}
+.podium-score{position:absolute;top:86.0%;left:50%;transform:translate(-50%,-50%);width:72%;color:#ffd34f;font-family:var(--display);font-size:26px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:6px;z-index:3;text-shadow:0 2px 5px rgba(0,0,0,.85)}
+.podium-card.rank-1 .podium-score{font-size:29px}
+.podium-score small{font-size:16px;color:#aed9f8;font-family:var(--font);font-weight:600}
+.podium-pipe{color:#38bdf8;opacity:.85;font-weight:300;font-size:22px;margin:0 4px}
 
 .lb-list{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
 .lb-row{display:grid;grid-template-columns:80px 1fr 140px;align-items:center;padding:16px 20px;border-radius:8px;background:rgba(10,24,40,.85);border:2px solid #284762}
@@ -389,31 +391,31 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
               <!-- Rank 2: Silver (Left) -->
               <div class="podium-card rank-2">
                 <div class="podium-frame-wrap">
-                  <img class="podium-frame-img" src="assets/frame_silver.webp" alt="Rank 2">
                   <div class="podium-avatar"><span class="podium-flag" id="p2Flag">🇸🇦</span></div>
+                  <img class="podium-frame-img" src="assets/frame_silver.webp" alt="Rank 2">
+                  <strong class="podium-name" id="p2Name">Fahad_77</strong>
+                  <div class="podium-score" id="p2Score">16</div>
                 </div>
-                <strong class="podium-name" id="p2Name">Fahad_77</strong>
-                <span class="podium-score" id="p2Score">16</span>
               </div>
 
               <!-- Rank 1: Gold (Center & Elevated) -->
               <div class="podium-card rank-1">
                 <div class="podium-frame-wrap">
-                  <img class="podium-frame-img" src="assets/frame_gold.webp" alt="Rank 1">
                   <div class="podium-avatar"><span class="podium-flag" id="p1Flag">🇲🇦</span></div>
+                  <img class="podium-frame-img" src="assets/frame_gold.webp" alt="Rank 1">
+                  <strong class="podium-name" id="p1Name">Yassine_R</strong>
+                  <div class="podium-score" id="p1Score">18</div>
                 </div>
-                <strong class="podium-name" id="p1Name">Yassine_R</strong>
-                <span class="podium-score" id="p1Score">18</span>
               </div>
 
               <!-- Rank 3: Bronze (Right) -->
               <div class="podium-card rank-3">
                 <div class="podium-frame-wrap">
-                  <img class="podium-frame-img" src="assets/frame_bronze.webp" alt="Rank 3">
                   <div class="podium-avatar"><span class="podium-flag" id="p3Flag">🇪🇬</span></div>
+                  <img class="podium-frame-img" src="assets/frame_bronze.webp" alt="Rank 3">
+                  <strong class="podium-name" id="p3Name">MoSalah_Fan</strong>
+                  <div class="podium-score" id="p3Score">15</div>
                 </div>
-                <strong class="podium-name" id="p3Name">MoSalah_Fan</strong>
-                <span class="podium-score" id="p3Score">15</span>
               </div>
             </div>
 
@@ -592,17 +594,20 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
     text('lbStreakValue','🔥 '+locale(streak));
 
     // Update Podium Top 3 Frames
+    var formatPodiumScore=function(score){
+      return '<span>'+locale(score)+'</span><span class="podium-pipe">|</span><small>'+copy.goalsSuffix+'</small>';
+    };
     if(list[0]){
       text('p1Flag',list[0].flag);text('p1Name',list[0].name);
-      var p1S=$('p1Score');if(p1S)p1S.innerHTML=locale(list[0].score)+'<small> '+copy.goalsSuffix+'</small>';
+      var p1S=$('p1Score');if(p1S)p1S.innerHTML=formatPodiumScore(list[0].score);
     }
     if(list[1]){
       text('p2Flag',list[1].flag);text('p2Name',list[1].name);
-      var p2S=$('p2Score');if(p2S)p2S.innerHTML=locale(list[1].score)+'<small> '+copy.goalsSuffix+'</small>';
+      var p2S=$('p2Score');if(p2S)p2S.innerHTML=formatPodiumScore(list[1].score);
     }
     if(list[2]){
       text('p3Flag',list[2].flag);text('p3Name',list[2].name);
-      var p3S=$('p3Score');if(p3S)p3S.innerHTML=locale(list[2].score)+'<small> '+copy.goalsSuffix+'</small>';
+      var p3S=$('p3Score');if(p3S)p3S.innerHTML=formatPodiumScore(list[2].score);
     }
 
     var container=$('lbList');
@@ -966,7 +971,7 @@ button:disabled{cursor:default;filter:saturate(.45);opacity:.58}
       window.open(shareUrl,'_blank');
     }
   });
-  var AFFILIATE_URLS={onex:'https://reffpa.com/L?tag=d_5637867m_1599c_&site=5637867&ad=1599',melbet:'https://reffpa.com/L?tag=d_6043134m_1599c_&site=6043134&ad=1599'};
+  var AFFILIATE_URLS={onex:'https://reffpa.com/L?tag=d_5637867m_1599c_&site=5637867&ad=1599',melbet:'https://refpa39407.com/L?tag=d_6043134m_59685c_&site=6043134&ad=59685'};
   function openSponsor(partner){var url=AFFILIATE_URLS[partner]||AFFILIATE_URLS.onex;if(tg&&tg.openLink){try{tg.openLink(url);}catch(e){window.open(url,'_blank');}}else{window.open(url,'_blank');}}
   var adCycle=0;
   if($('stadiumAdBoard')){$('stadiumAdBoard').addEventListener('click',function(){adCycle=1-adCycle;openSponsor(adCycle===0?'onex':'melbet');});}
